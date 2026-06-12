@@ -2,10 +2,12 @@ import { createClient } from "@supabase/supabase-js";
 import Parser from "rss-parser";
 import { createHash } from "crypto";
 import OpenAI from "openai";
+import ws from "ws";
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!
+  process.env.SUPABASE_SERVICE_KEY!,
+  { realtime: { transport: ws } }
 );
 
 const openrouter = new OpenAI({
