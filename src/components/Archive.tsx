@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button";
 import type { Article } from "@/lib/supabase";
 
 const FALLBACK = [
-  { id: "1", source_url: "#", plain_title: "The week AI learned to say "I don't know"", category: "The Big Story", published_at: "2026-06-11T00:00:00Z", source_name: "Article" },
+  { id: "1", source_url: "#", plain_title: "The week AI learned to say it doesn't know", category: "The Big Story", published_at: "2026-06-11T00:00:00Z", source_name: "Article" },
   { id: "2", source_url: "#", plain_title: "Your group chat has a new member", category: "Everyday", published_at: "2026-06-10T00:00:00Z", source_name: "Article" },
   { id: "3", source_url: "#", plain_title: "We asked five AIs to plan a birthday party", category: "We Tried It", published_at: "2026-06-09T00:00:00Z", source_name: "Article" },
   { id: "4", source_url: "#", plain_title: "The quiet rise of the AI co-pilot", category: "At Work", published_at: "2026-06-08T00:00:00Z", source_name: "Article" },
