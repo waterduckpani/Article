@@ -146,7 +146,7 @@ export function Archive({ articles }: { articles: Article[] }) {
                     Article
                   </span>
                   <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 500, color: "#468189" }}>
-                    {e.source_name}
+                    {e.source_name.split(",")[0].trim()}
                   </span>
                 </div>
 

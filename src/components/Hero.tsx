@@ -187,7 +187,7 @@ export function Hero({ article }: { article: Article | null }) {
                   borderTop: "1px solid rgba(3,25,38,.1)",
                 }}>
                   <span style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, fontWeight: 500, letterSpacing: ".08em", color: "#77ACA2" }}>
-                    {article?.source_name ?? "Article"}
+                    {(article?.source_name ?? "Article").split(",")[0].trim()}
                   </span>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 14, fontWeight: 800, color: "#468189" }}>
                     Read the story →
