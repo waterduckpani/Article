@@ -16,7 +16,7 @@ const openrouter = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY!,
 });
 
-const SUMMARIZER_MODEL = "google/gemini-2.5-flash-preview-05-20";
+const SUMMARIZER_MODEL = "google/gemini-3.1-flash-lite";
 
 const RSS_FEEDS = [
   { url: "https://www.technologyreview.com/feed/", name: "MIT Tech Review" },
