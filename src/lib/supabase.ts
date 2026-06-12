@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 export type ArticleSource = {
   url: string;
   name: string;
+  title?: string;
 };
 
 export type Article = {

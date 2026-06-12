@@ -74,6 +74,110 @@ function ReadingProgress() {
   );
 }
 
+function SourcesSection({ sources }: { sources: ArticleSource[] }) {
+  // Group by source name
+  const grouped = sources.reduce<Record<string, ArticleSource[]>>((acc, s) => {
+    (acc[s.name] = acc[s.name] || []).push(s);
+    return acc;
+  }, {});
+  const groups = Object.entries(grouped);
+
+  const [open, setOpen] = useState<string | null>(null);
+
+  return (
+    <Block delay={0}>
+      <div style={{ marginTop: 64, paddingTop: 32, borderTop: "2px solid rgba(3,25,38,.1)" }}>
+        <div style={{
+          fontFamily: "var(--font-mono)",
+          fontSize: 10,
+          fontWeight: 700,
+          letterSpacing: ".2em",
+          textTransform: "uppercase",
+          color: "#468189",
+          marginBottom: 16,
+        }}>
+          Sources
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          {groups.map(([name, items]) => {
+            const isOpen = open === name;
+            return (
+              <div key={name} style={{ border: "1px solid rgba(3,25,38,.1)", borderRadius: 8, overflow: "hidden" }}>
+                {/* Header row */}
+                <button
+                  onClick={() => setOpen(isOpen ? null : name)}
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "12px 16px",
+                    background: isOpen ? "rgba(3,25,38,.04)" : "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    transition: "background 0.2s ease",
+                  }}
+                >
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#031926" }}>{name}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: 10,
+                      fontWeight: 600,
+                      letterSpacing: ".1em",
+                      color: "#77ACA2",
+                    }}>
+                      {items.length} {items.length === 1 ? "article" : "articles"}
+                    </span>
+                    <span style={{
+                      fontSize: 11,
+                      color: "#468189",
+                      transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                      transition: "transform 0.25s ease",
+                      display: "inline-block",
+                    }}>
+                      ▾
+                    </span>
+                  </div>
+                </button>
+
+                {/* Dropdown articles */}
+                <div style={{
+                  maxHeight: isOpen ? 400 : 0,
+                  overflow: "hidden",
+                  transition: "max-height 0.3s cubic-bezier(0.2,0.8,0.2,1)",
+                }}>
+                  <div style={{ borderTop: "1px solid rgba(3,25,38,.08)", padding: "8px 0" }}>
+                    {items.map((s, i) => (
+                      <a
+                        key={i}
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="footer-link"
+                        style={{
+                          display: "block",
+                          padding: "8px 16px",
+                          fontSize: 13,
+                          fontWeight: 500,
+                          color: "#2a4348",
+                        }}
+                      >
+                        {s.title || s.url} ↗
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </Block>
+  );
+}
+
 function renderBlocks(content: string) {
   const blocks = content.split(/\n\n+/);
   return blocks.map((block, i) => {
@@ -166,47 +270,7 @@ export function ArticleBody({ content, sources }: { content: string; sources: Ar
         <div>{renderBlocks(content)}</div>
 
         {/* Sources */}
-        {sources.length > 0 && (
-          <Block delay={0}>
-            <div
-              style={{
-                marginTop: 64,
-                paddingTop: 32,
-                borderTop: "2px solid rgba(3,25,38,.1)",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 10,
-                  fontWeight: 700,
-                  letterSpacing: ".2em",
-                  textTransform: "uppercase",
-                  color: "#468189",
-                  marginBottom: 16,
-                }}
-              >
-                Sources
-              </div>
-              <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
-                {sources.map((s, i) => (
-                  <li key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#E0A53F", flexShrink: 0, display: "inline-block" }} />
-                    <a
-                      href={s.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="footer-link"
-                      style={{ fontSize: 13, fontWeight: 600 }}
-                    >
-                      {s.name} ↗
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Block>
-        )}
+        {sources.length > 0 && <SourcesSection sources={sources} />}
 
         {/* Back nav */}
         <Block delay={0}>

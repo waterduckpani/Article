@@ -218,7 +218,7 @@ async function run() {
       continue;
     }
 
-    const sourcesJson = clusterSources.map((s) => ({ url: s.url, name: s.sourceName }));
+    const sourcesJson = clusterSources.map((s) => ({ url: s.url, name: s.sourceName, title: s.title }));
 
     const { error } = await supabase.from("articles").insert({
       source_url: `article:${hash}`,
