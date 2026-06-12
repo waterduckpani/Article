@@ -1,9 +1,4 @@
 import ws from "ws";
-if (!globalThis.WebSocket) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (globalThis as any).WebSocket = ws;
-}
-
 import { createClient } from "@supabase/supabase-js";
 import Parser from "rss-parser";
 import { createHash } from "crypto";
@@ -11,7 +6,8 @@ import OpenAI from "openai";
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!
+  process.env.SUPABASE_SERVICE_KEY!,
+  { realtime: { transport: ws } }
 );
 
 const openrouter = new OpenAI({
