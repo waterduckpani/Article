@@ -15,17 +15,19 @@ export function Navbar() {
       }}
     >
       <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-        <div
+        <a
+          href="/"
           style={{
             fontFamily: "var(--font-display)",
             fontWeight: 800,
             fontSize: 30,
             letterSpacing: "-.02em",
             color: "#031926",
+            textDecoration: "none",
           }}
         >
           Article
-        </div>
+        </a>
         <span
           style={{
             fontSize: 11,
