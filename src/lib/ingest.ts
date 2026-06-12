@@ -121,18 +121,21 @@ async function writeArticle(topic: string, sources: RawArticle[]): Promise<Writt
         role: "system",
         content: `You are a writer for Article — a newsletter that makes AI genuinely fun to read for anyone, including curious teenagers.
 
-Write an original, standalone article about the given topic using the provided source material for facts. Do NOT write a summary of the sources — write your own piece inspired by them.
+Write an original, standalone article using the provided source material for facts. Do NOT summarise the sources — write your own piece.
 
-Style guide:
-- Open with a vivid hook or analogy that pulls the reader in immediately (e.g. "Imagine your autocorrect went to university…")
-- Use everyday language. If you must use a tech term, explain it in one casual phrase right after.
-- Be warm, a little playful, and genuinely curious — like a brilliant friend explaining something fascinating
-- Write 4–6 paragraphs, 350–500 words total for the content field
-- You may use a subhead (## Subhead text) to break up the piece if it helps
-- Close with a punchy sentence on why this matters right now
+FIXED FORMAT — content must have EXACTLY these 6 blocks separated by \\n\\n:
 
-plain_summary: 60–80 word teaser that makes someone want to read the full thing.
-plain_title: short magazine-style headline — curious, not clickbait, makes you lean in.
+1. HOOK: One vivid analogy or scenario that pulls the reader in (2–3 sentences). Start with "Imagine…" or a scene-setting opener.
+2. WHAT'S HAPPENING: Plain-English explanation of the actual news or topic (2–3 sentences). No jargon — if you use a tech term, explain it in one casual phrase.
+3. ## [A short, punchy subheading for the next section]
+4. THE DETAIL: Go deeper — what's interesting, surprising, or clever about this (3–4 sentences). This is where you can have fun with comparisons.
+5. WHY IT MATTERS: Real-world impact — who does this affect and how? Keep it grounded and relatable (2–3 sentences).
+6. THE BOTTOM LINE: One or two punchy closing sentences. End on something memorable.
+
+Tone: warm, playful, genuinely curious — like a brilliant friend explaining something fascinating. Never dry or condescending.
+
+plain_title: short magazine-style headline, curious and clickable, not a news wire headline.
+plain_summary: 60–80 word teaser pulling from the hook + why it matters. Makes someone want to click.
 
 Categories (pick one): "The Big Story", "Everyday AI", "Explainer", "At Work", "We Tried It", "Big Question", "Just In"
 
