@@ -15,7 +15,7 @@ export function Hero({ article }: { article: Article | null }) {
   const summary = article?.plain_summary ?? "Apple and Google quietly switched on assistants that book appointments and draft replies. We lived with both for a week.";
   const category = article?.category ?? "The Big Story";
   const date = article ? formatDate(article.published_at) : "12 JUN 2026";
-  const href = article?.source_url ?? "#today";
+  const href = article ? `/articles/${article.id}` : "#today";
 
   return (
     <section style={{ background: "#F4E9CD", padding: "100px 64px 120px" }}>
@@ -81,7 +81,7 @@ export function Hero({ article }: { article: Article | null }) {
         {/* Right: Latest article card */}
         <RevealOnScroll delay={120}>
           <div className="edition-stack" id="today">
-            <a href={href} target="_blank" rel="noopener noreferrer" className="edition-card-new" style={{
+            <a href={href} className="edition-card-new" style={{
               background: "#FBF6E6",
               border: "1px solid rgba(3,25,38,.1)",
               borderRadius: 18,

@@ -124,9 +124,7 @@ export function Archive({ articles }: { articles: Article[] }) {
               }}
             >
               <a
-                href={e.source_url}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={e.source_url === "#" ? "#" : `/articles/${e.id}`}
                 onMouseEnter={() => setHover(i)}
                 onMouseLeave={() => setHover(null)}
                 style={{
