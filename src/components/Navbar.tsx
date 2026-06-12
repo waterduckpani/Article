@@ -1,6 +1,11 @@
 import { Button } from "@/components/ui/Button";
 
-const navLinks = ["Today", "Archive", "What is AI?", "About"];
+const navLinks = [
+  { label: "Today",       href: "/#today" },
+  { label: "Archive",     href: "/#archive" },
+  { label: "What is AI?", href: "/what-is-ai" },
+  { label: "About",       href: "/#about" },
+];
 
 export function Navbar() {
   return (
@@ -44,11 +49,11 @@ export function Navbar() {
       <nav style={{ display: "flex", gap: 30, fontSize: 15, fontWeight: 600 }}>
         {navLinks.map((link) => (
           <a
-            key={link}
-            href={`#${link.toLowerCase().replace(/[^a-z]/g, "")}`}
+            key={link.label}
+            href={link.href}
             className="nav-link"
           >
-            {link}
+            {link.label}
           </a>
         ))}
       </nav>

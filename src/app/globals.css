@@ -23,6 +23,28 @@ html, body {
   overflow-x: hidden;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── Page reveal (fires as the loader slides away at ~1.9s) ── */
+@keyframes pageReveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-reveal {
+  /* fill-mode: both keeps it invisible during the delay period,
+     then holds the final state after the animation finishes */
+  animation: pageReveal 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 1.9s both;
+}
+
 body {
   font-family: var(--font-body);
   background: var(--color-paper);

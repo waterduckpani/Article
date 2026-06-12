@@ -73,7 +73,7 @@ export function Archive({ articles }: { articles: Article[] }) {
             The Archive
           </h2>
         </div>
-        <Button variant="primary" size="sm" href="#">
+        <Button variant="primary" size="sm" href="/archive">
           Browse all {articles.length} →
         </Button>
       </div>

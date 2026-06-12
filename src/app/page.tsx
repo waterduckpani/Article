@@ -7,18 +7,19 @@ import { EmailSignup } from "@/components/EmailSignup";
 import { Footer } from "@/components/Footer";
 import { getPublishedArticles } from "@/lib/supabase";
 
-export const revalidate = 3600; // re-fetch at most once per hour
+export const revalidate = 3600;
 
 export default async function Home() {
   const articles = await getPublishedArticles(20);
-  const latest = articles[0] ?? null;
+  const bigStories = articles.filter((a) => a.category === "The Big Story");
+  const latest = bigStories[0] ?? articles[0] ?? null;
 
   return (
     <main>
       <Navbar />
       <Ticker articles={articles} />
       <Hero article={latest} />
-      <Archive articles={articles} />
+      <Archive articles={bigStories.length >= 3 ? bigStories : articles} />
       <WhatIsAI />
       <EmailSignup />
       <Footer />

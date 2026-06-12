@@ -15,7 +15,7 @@ export function Hero({ article }: { article: Article | null }) {
   const summary = article?.plain_summary ?? "Apple and Google quietly switched on assistants that book appointments and draft replies. We lived with both for a week.";
   const category = article?.category ?? "The Big Story";
   const date = article ? formatDate(article.published_at) : "12 JUN 2026";
-  const href = article ? `/articles/${article.id}` : "#today";
+  const href = article ? `/articles/${article.id}` : "/archive";
 
   return (
     <section style={{ background: "#F4E9CD", padding: "100px 64px 120px" }}>
@@ -69,7 +69,7 @@ export function Hero({ article }: { article: Article | null }) {
             explained like a smart friend would.
           </p>
           <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-            <Button variant="primary" href="#today">
+            <Button variant="primary" href={href}>
               Read today&#39;s edition →
             </Button>
             <a href="#whatis" className="nav-link" style={{ fontSize: 15, fontWeight: 700 }}>

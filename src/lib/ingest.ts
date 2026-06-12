@@ -16,7 +16,7 @@ const openrouter = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY!,
 });
 
-const SUMMARIZER_MODEL = "google/gemini-2.5-pro";
+const SUMMARIZER_MODEL = "google/gemini-2.5-flash-preview-05-20";
 
 const RSS_FEEDS = [
   { url: "https://www.technologyreview.com/feed/", name: "MIT Tech Review" },
@@ -45,6 +45,16 @@ type WrittenArticle = {
   plain_summary: string;
   content: string;
   category: string;
+};
+
+type PendingArticle = {
+  article: WrittenArticle;
+  hash: string;
+  sourcesJson: Array<{ url: string; name: string; title: string }>;
+  sourceCount: number;
+  publishedAt: string;
+  sourceName: string;
+  originalTitle: string;
 };
 
 const parser = new Parser();
@@ -137,7 +147,7 @@ Tone: warm, playful, genuinely curious — like a brilliant friend explaining so
 plain_title: short magazine-style headline, curious and clickable, not a news wire headline.
 plain_summary: 60–80 word teaser pulling from the hook + why it matters. Makes someone want to click.
 
-Categories (pick one): "The Big Story", "Everyday AI", "Explainer", "At Work", "We Tried It", "Big Question", "Just In"
+Categories (pick one): "Everyday AI", "Explainer", "At Work", "We Tried It", "Big Question", "Just In"
 
 Return JSON: { plain_title: string, plain_summary: string, content: string, category: string }`,
       },
@@ -166,13 +176,22 @@ async function isDuplicate(hash: string): Promise<boolean> {
   return !!data;
 }
 
+const FRESHNESS_HOURS = 24;
+
 async function run() {
   console.log("Starting ingestion...");
   const allArticles = await fetchArticles();
   console.log(`Fetched ${allArticles.length} articles from feeds`);
 
+  const cutoff = Date.now() - FRESHNESS_HOURS * 60 * 60 * 1000;
+  const freshArticles = allArticles.filter((a) => {
+    const t = new Date(a.publishedAt).getTime();
+    return !isNaN(t) && t >= cutoff;
+  });
+  console.log(`Fresh (last ${FRESHNESS_HOURS}h): ${freshArticles.length} of ${allArticles.length}`);
+
   const usedUrls = await getAlreadyUsedUrls();
-  const newArticles = allArticles.filter((a) => !usedUrls.has(a.url));
+  const newArticles = freshArticles.filter((a) => !usedUrls.has(a.url));
   console.log(`New (unused) articles: ${newArticles.length}`);
 
   if (newArticles.length < 3) {
@@ -189,7 +208,8 @@ async function run() {
     return;
   }
 
-  let published = 0;
+  // Stage 1: write all articles (category assigned by LLM, excluding "The Big Story")
+  const pending: PendingArticle[] = [];
 
   for (const cluster of clusters) {
     const clusterSources = cluster.indices
@@ -218,19 +238,47 @@ async function run() {
       continue;
     }
 
-    const sourcesJson = clusterSources.map((s) => ({ url: s.url, name: s.sourceName, title: s.title }));
+    pending.push({
+      article,
+      hash,
+      sourcesJson: clusterSources.map((s) => ({ url: s.url, name: s.sourceName, title: s.title })),
+      sourceCount: clusterSources.length,
+      publishedAt: clusterSources[0]?.publishedAt ?? new Date().toISOString(),
+      sourceName: clusterSources.map((s) => s.sourceName).join(", "),
+      originalTitle: cluster.topic,
+    });
+  }
+
+  if (pending.length === 0) {
+    console.log("No new articles to publish.");
+    return;
+  }
+
+  // Stage 2: elect The Big Story — the cluster backed by the most source articles
+  const bigStoryIdx = pending.reduce(
+    (best, p, i) => p.sourceCount > pending[best].sourceCount ? i : best,
+    0
+  );
+  console.log(`Big story elected: "${pending[bigStoryIdx].article.plain_title}" (${pending[bigStoryIdx].sourceCount} sources)`);
+
+  // Stage 3: insert all with correct categories
+  let published = 0;
+
+  for (let i = 0; i < pending.length; i++) {
+    const { article, hash, sourcesJson, publishedAt, sourceName, originalTitle } = pending[i];
+    const category = i === bigStoryIdx ? "The Big Story" : article.category;
 
     const { error } = await supabase.from("articles").insert({
       source_url: `article:${hash}`,
-      source_name: clusterSources.map((s) => s.sourceName).join(", "),
-      original_title: cluster.topic,
-      published_at: clusterSources[0]?.publishedAt ?? new Date().toISOString(),
+      source_name: sourceName,
+      original_title: originalTitle,
+      published_at: publishedAt,
       content_hash: hash,
       plain_title: article.plain_title,
       plain_summary: article.plain_summary,
       content: article.content,
       sources: sourcesJson,
-      category: article.category,
+      category,
       quality_score: 8,
       is_ai_related: true,
       status: "published",
@@ -243,7 +291,7 @@ async function run() {
     }
 
     published++;
-    console.log(`[PUBLISHED] ${article.plain_title}`);
+    console.log(`[PUBLISHED] ${article.plain_title} [${category}]`);
   }
 
   console.log(`Done. Published: ${published} new articles.`);

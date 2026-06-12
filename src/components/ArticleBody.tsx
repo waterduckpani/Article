@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import type { ArticleSource } from "@/lib/supabase";
+import type { ArticleSource, AdjacentArticle } from "@/lib/supabase";
 
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null);
@@ -224,7 +224,17 @@ function renderBlocks(content: string) {
   });
 }
 
-export function ArticleBody({ content, sources }: { content: string; sources: ArticleSource[] }) {
+export function ArticleBody({
+  content,
+  sources,
+  prev,
+  next,
+}: {
+  content: string;
+  sources: ArticleSource[];
+  prev?: AdjacentArticle | null;
+  next?: AdjacentArticle | null;
+}) {
   const { ref: bodyRef, inView: bodyInView } = useInView(0.05);
 
   return (
@@ -272,9 +282,51 @@ export function ArticleBody({ content, sources }: { content: string; sources: Ar
         {/* Sources */}
         {sources.length > 0 && <SourcesSection sources={sources} />}
 
-        {/* Back nav */}
+        {/* Bottom nav */}
+        {(prev || next) && (
+          <Block delay={0}>
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              marginTop: 64,
+              paddingTop: 28,
+              borderTop: "1px solid rgba(3,25,38,.12)",
+            }}>
+              {prev ? (
+                <a
+                  href={`/articles/${prev.id}`}
+                  className="nav-link"
+                  style={{ display: "flex", flexDirection: "column", gap: 5, maxWidth: "44%", textDecoration: "none" }}
+                >
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#77ACA2" }}>
+                    ← Previous
+                  </span>
+                  <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, lineHeight: 1.25, color: "#031926", letterSpacing: "-.01em" }}>
+                    {prev.plain_title}
+                  </span>
+                </a>
+              ) : <div />}
+              {next ? (
+                <a
+                  href={`/articles/${next.id}`}
+                  className="nav-link"
+                  style={{ display: "flex", flexDirection: "column", gap: 5, maxWidth: "44%", textDecoration: "none", alignItems: "flex-end", textAlign: "right" }}
+                >
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#77ACA2" }}>
+                    Next →
+                  </span>
+                  <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, lineHeight: 1.25, color: "#031926", letterSpacing: "-.01em" }}>
+                    {next.plain_title}
+                  </span>
+                </a>
+              ) : <div />}
+            </div>
+          </Block>
+        )}
+
         <Block delay={0}>
-          <div style={{ marginTop: 64, marginBottom: 32 }}>
+          <div style={{ marginTop: 32, marginBottom: 32 }}>
             <Button href="/" variant="primary">← Back to all stories</Button>
           </div>
         </Block>

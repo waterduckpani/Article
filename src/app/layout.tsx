@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Hanken_Grotesk, Spline_Sans_Mono } from "next/font/google";
 import "./globals.css";
+import { Loader } from "@/components/Loader";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -38,7 +39,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${bricolage.variable} ${hanken.variable} ${splineMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        <Loader />
+        <div className="page-reveal">{children}</div>
+      </body>
     </html>
   );
 }

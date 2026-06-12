@@ -82,7 +82,7 @@ export function WhatIsAI() {
             then build up, one plain-English idea at a time. No math. No
             buzzwords. Just enough to feel at home in any conversation about it.
           </p>
-          <Button variant="primary" href="#">
+          <Button variant="primary" href="/what-is-ai">
             Start from the very beginning →
           </Button>
         </RevealOnScroll>

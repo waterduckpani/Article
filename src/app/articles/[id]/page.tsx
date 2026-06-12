@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
-import { getArticleById } from "@/lib/supabase";
+import { getArticleById, getAdjacentArticles } from "@/lib/supabase";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ArticleBody } from "@/components/ArticleBody";
 import { Button } from "@/components/ui/Button";
-import type { ArticleSource } from "@/lib/supabase";
+import type { ArticleSource, AdjacentArticle } from "@/lib/supabase";
 
 export const revalidate = 3600;
 
@@ -25,6 +25,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
   const { id } = await params;
   const article = await getArticleById(id);
   if (!article) notFound();
+
+  const { prev, next } = await getAdjacentArticles(id, article.published_at);
 
   const content = article.content ?? article.plain_summary;
   const sources: ArticleSource[] = article.sources ?? (article.source_url && !article.source_url.startsWith("article:") ? [{ url: article.source_url, name: article.source_name }] : []);
@@ -65,8 +67,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
           </div>
 
           <div style={{ maxWidth: 760, margin: "0 auto", position: "relative", zIndex: 1 }}>
-            {/* Back link */}
-            <div style={{ marginBottom: 48 }}>
+            {/* Back link + prev/next */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 48 }}>
               <a
                 href="/"
                 className="nav-link"
@@ -81,6 +83,29 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
               >
                 ← All stories
               </a>
+              <div style={{ display: "flex", gap: 12 }}>
+                {prev && (
+                  <a
+                    href={`/articles/${prev.id}`}
+                    className="nav-link"
+                    style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 600, letterSpacing: ".1em", color: "#468189" }}
+                    title={prev.plain_title}
+                  >
+                    ← Prev
+                  </a>
+                )}
+                {prev && next && <span style={{ color: "#2a4348", opacity: 0.4 }}>·</span>}
+                {next && (
+                  <a
+                    href={`/articles/${next.id}`}
+                    className="nav-link"
+                    style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 600, letterSpacing: ".1em", color: "#468189" }}
+                    title={next.plain_title}
+                  >
+                    Next →
+                  </a>
+                )}
+              </div>
             </div>
 
             {/* Category */}
@@ -167,7 +192,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
         </div>
 
         {/* Article body — client component for animations */}
-        <ArticleBody content={content} sources={sources} />
+        <ArticleBody content={content} sources={sources} prev={prev} next={next} />
 
       </main>
       <Footer />
