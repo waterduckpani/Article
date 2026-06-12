@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/Button";
 import type { ArticleSource } from "@/lib/supabase";
 
 function useInView(threshold = 0.15) {
@@ -195,7 +196,8 @@ export function ArticleBody({ content, sources }: { content: string; sources: Ar
                       href={s.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ fontSize: 13, color: "#468189", textDecoration: "none", fontWeight: 600 }}
+                      className="footer-link"
+                      style={{ fontSize: 13, fontWeight: 600 }}
                     >
                       {s.name} ↗
                     </a>
@@ -209,24 +211,7 @@ export function ArticleBody({ content, sources }: { content: string; sources: Ar
         {/* Back nav */}
         <Block delay={0}>
           <div style={{ marginTop: 64, marginBottom: 32 }}>
-            <a
-              href="/"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 10,
-                background: "#031926",
-                color: "#F4E9CD",
-                padding: "14px 28px",
-                borderRadius: 40,
-                fontWeight: 800,
-                fontSize: 14,
-                textDecoration: "none",
-                letterSpacing: ".02em",
-              }}
-            >
-              ← Back to all stories
-            </a>
+            <Button href="/" variant="primary">← Back to all stories</Button>
           </div>
         </Block>
       </div>

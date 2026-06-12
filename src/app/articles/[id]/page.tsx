@@ -3,6 +3,7 @@ import { getArticleById } from "@/lib/supabase";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ArticleBody } from "@/components/ArticleBody";
+import { Button } from "@/components/ui/Button";
 import type { ArticleSource } from "@/lib/supabase";
 
 export const revalidate = 3600;
@@ -65,24 +66,22 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
           <div style={{ maxWidth: 760, margin: "0 auto", position: "relative", zIndex: 1 }}>
             {/* Back link */}
-            <a
-              href="/"
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: 11,
-                fontWeight: 600,
-                letterSpacing: ".14em",
-                textTransform: "uppercase",
-                color: "#468189",
-                textDecoration: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                marginBottom: 48,
-              }}
-            >
-              ← All stories
-            </a>
+            <div style={{ marginBottom: 48 }}>
+              <a
+                href="/"
+                className="nav-link"
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  letterSpacing: ".14em",
+                  textTransform: "uppercase",
+                  color: "#468189",
+                }}
+              >
+                ← All stories
+              </a>
+            </div>
 
             {/* Category */}
             <div style={{ marginBottom: 24 }}>
