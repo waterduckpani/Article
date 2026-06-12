@@ -76,7 +76,9 @@ Return JSON: { plain_title: string, plain_summary: string, content: string, cate
 
 const QUALITY_PROMPT = `You are an editor for Article, a newsletter that explains AI through analogy and concrete education.
 
-Review this article and score it. Return JSON: { score: number, feedback: string, rewrite_needed: boolean }
+Review this article and score it. Return JSON: { score: number, feedback: string, rewrite_needed: boolean, is_relevant: boolean }
+
+FIRST — set is_relevant: false (and rewrite_needed: false) if the article is NOT genuinely about AI, machine learning, robotics, or closely related technology. Finance, business strategy, investing, space exploration, or general tech news that does not involve AI are NOT relevant. If is_relevant is false, skip all other checks.
 
 Score 1–10. Set rewrite_needed: true if score < 7.
 
@@ -113,6 +115,7 @@ type QualityResult = {
   score: number;
   feedback: string;
   rewrite_needed: boolean;
+  is_relevant: boolean;
 };
 
 type PendingArticle = {
@@ -220,11 +223,11 @@ async function checkQuality(article: WrittenArticle): Promise<QualityResult> {
   try {
     return JSON.parse(res.choices[0].message.content ?? "{}") as QualityResult;
   } catch {
-    return { score: 8, feedback: "Parse error — skipping quality gate.", rewrite_needed: false };
+    return { score: 8, feedback: "Parse error — skipping quality gate.", rewrite_needed: false, is_relevant: true };
   }
 }
 
-async function writeWithQualityGate(topic: string, sources: RawArticle[]): Promise<WrittenArticle> {
+async function writeWithQualityGate(topic: string, sources: RawArticle[]): Promise<WrittenArticle | null> {
   let article = await writeArticle(topic, sources);
 
   // Fast banned-phrase check before hitting the LLM
@@ -238,6 +241,11 @@ async function writeWithQualityGate(topic: string, sources: RawArticle[]): Promi
   // LLM quality pass
   const quality = await checkQuality(article);
   console.log(`  [QUALITY] Score: ${quality.score}/10 — ${quality.feedback}`);
+
+  if (quality.is_relevant === false) {
+    console.log(`  [QUALITY] Article is not AI-related — skipping.`);
+    return null;
+  }
 
   if (quality.rewrite_needed) {
     console.log(`  [QUALITY] Rewriting with feedback...`);
@@ -324,13 +332,15 @@ async function run() {
 
     console.log(`Writing: "${cluster.topic}" (${clusterSources.length} sources)`);
 
-    let article: WrittenArticle;
+    let article: WrittenArticle | null;
     try {
       article = await writeWithQualityGate(cluster.topic, clusterSources);
     } catch (err) {
       console.error(`Failed to write article for "${cluster.topic}":`, err);
       continue;
     }
+
+    if (!article) continue;
 
     if (!article.plain_title || !article.plain_summary || !article.content) {
       console.error(`Incomplete LLM response for "${cluster.topic}":`, article);
