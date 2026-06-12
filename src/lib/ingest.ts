@@ -16,12 +16,14 @@ const openrouter = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY!,
 });
 
-const MODEL = "google/gemini-2.5-flash";
+const SUMMARIZER_MODEL = "google/gemini-2.5-pro";
+const CHECKER_MODEL = "google/gemini-2.5-flash";
 
 const RSS_FEEDS = [
   { url: "https://www.technologyreview.com/feed/", name: "MIT Tech Review" },
   { url: "https://thegradient.pub/rss/", name: "The Gradient" },
-  { url: "https://feeds.reuters.com/reuters/technologyNews", name: "Reuters Technology" },
+  { url: "https://techcrunch.com/category/artificial-intelligence/feed/", name: "TechCrunch AI" },
+  { url: "https://venturebeat.com/category/ai/feed/", name: "VentureBeat AI" },
   { url: "https://arstechnica.com/tag/ai/feed/", name: "Ars Technica AI" },
   { url: "https://deepmind.google/blog/rss.xml", name: "Google DeepMind" },
 ];
@@ -67,12 +69,24 @@ async function isDuplicate(hash: string, url: string) {
 
 async function summarize(title: string, content: string) {
   const res = await openrouter.chat.completions.create({
-    model: MODEL,
+    model: SUMMARIZER_MODEL,
     messages: [
       {
         role: "system",
-        content:
-          "You are an AI news writer for a general audience with no technical background. Rewrite the article in plain, clear English. Avoid jargon. Keep it under 150 words. Return JSON: { plain_title: string, plain_summary: string, category: string }",
+        content: `You are the writer for Article — a newsletter that makes AI stories genuinely fun to read for anyone, including curious teenagers.
+
+Your job: rewrite each article as a short, punchy piece a 16-year-old would actually want to read.
+
+Rules:
+- Open with a relatable hook or analogy (e.g. "Imagine your autocorrect went to college…" or "Think of it like a GPS, but for your career.")
+- Use everyday language. If a tech term is unavoidable, explain it in one casual phrase right after.
+- Be warm, a little playful, and smart — never condescending or dry.
+- 130–160 words for plain_summary. End with a punchy one-liner on why it matters.
+- plain_title should be a short, curious headline that makes someone want to click — like a magazine cover line, not a news wire headline.
+
+Categories (pick the best fit): "The Big Story", "Everyday AI", "Explainer", "At Work", "We Tried It", "Big Question", "Just In"
+
+Return JSON: { plain_title: string, plain_summary: string, category: string }`,
       },
       {
         role: "user",
@@ -88,7 +102,7 @@ async function summarize(title: string, content: string) {
 
 async function qualityCheck(plain_title: string, plain_summary: string) {
   const res = await openrouter.chat.completions.create({
-    model: MODEL,
+    model: CHECKER_MODEL,
     messages: [
       {
         role: "system",
