@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
+import type { Article } from "@/lib/supabase";
 
-const headlines = [
+const FALLBACK = [
   "A new tool turns your doodles into finished art",
   "Doctors use AI to read scans faster — they still have the final say",
   "Why your inbox suddenly writes better than you do",
@@ -10,7 +11,8 @@ const headlines = [
   "Grandma's recipes, now read aloud in her own voice",
 ];
 
-export function Ticker() {
+export function Ticker({ articles }: { articles: Article[] }) {
+  const headlines = articles.length > 0 ? articles.map((a) => a.plain_title) : FALLBACK;
   const [tick, setTick] = useState(0);
   const [animKey, setAnimKey] = useState(0);
 
@@ -20,7 +22,7 @@ export function Ticker() {
       setAnimKey((prev) => prev + 1);
     }, 2900);
     return () => clearInterval(t);
-  }, []);
+  }, [headlines.length]);
 
   return (
     <div
@@ -34,14 +36,7 @@ export function Ticker() {
         gap: 28,
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 9,
-          flexShrink: 0,
-        }}
-      >
+      <div style={{ display: "flex", alignItems: "center", gap: 9, flexShrink: 0 }}>
         <span
           style={{
             width: 9,
@@ -67,23 +62,9 @@ export function Ticker() {
         </span>
       </div>
 
-      <div
-        style={{
-          width: 1,
-          height: 28,
-          background: "rgba(157,190,187,.3)",
-          flexShrink: 0,
-        }}
-      />
+      <div style={{ width: 1, height: 28, background: "rgba(157,190,187,.3)", flexShrink: 0 }} />
 
-      <div
-        style={{
-          flex: 1,
-          height: 32,
-          overflow: "hidden",
-          position: "relative",
-        }}
-      >
+      <div style={{ flex: 1, height: 32, overflow: "hidden", position: "relative" }}>
         <div
           key={animKey}
           style={{
@@ -103,15 +84,8 @@ export function Ticker() {
         </div>
       </div>
 
-      <div
-        style={{
-          fontFamily: "var(--font-mono)",
-          fontSize: 12,
-          color: "#77ACA2",
-          flexShrink: 0,
-        }}
-      >
-        {String(tick + 1).padStart(2, "0")} / 06
+      <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "#77ACA2", flexShrink: 0 }}>
+        {String(tick + 1).padStart(2, "0")} / {String(headlines.length).padStart(2, "0")}
       </div>
     </div>
   );

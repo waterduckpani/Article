@@ -1,24 +1,32 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/Button";
+import type { Article } from "@/lib/supabase";
 
-const editions = [
-  { issue: "183", date: "Jun 11", cat: "The Big Story", title: "The week AI learned to say “I don’t know”" },
-  { issue: "182", date: "Jun 10", cat: "Everyday",      title: "Your group chat has a new member" },
-  { issue: "181", date: "Jun 09", cat: "We Tried It",   title: "We asked five AIs to plan a birthday party" },
-  { issue: "180", date: "Jun 08", cat: "At Work",       title: "The quiet rise of the AI co-pilot" },
-  { issue: "179", date: "Jun 07", cat: "Explainer",     title: "What a trillion-word library taught a machine" },
-  { issue: "178", date: "Jun 06", cat: "Big Question",  title: "Can a computer actually be creative?" },
+const FALLBACK = [
+  { id: "1", source_url: "#", plain_title: "The week AI learned to say "I don't know"", category: "The Big Story", published_at: "2026-06-11T00:00:00Z", source_name: "Article" },
+  { id: "2", source_url: "#", plain_title: "Your group chat has a new member", category: "Everyday", published_at: "2026-06-10T00:00:00Z", source_name: "Article" },
+  { id: "3", source_url: "#", plain_title: "We asked five AIs to plan a birthday party", category: "We Tried It", published_at: "2026-06-09T00:00:00Z", source_name: "Article" },
+  { id: "4", source_url: "#", plain_title: "The quiet rise of the AI co-pilot", category: "At Work", published_at: "2026-06-08T00:00:00Z", source_name: "Article" },
+  { id: "5", source_url: "#", plain_title: "What a trillion-word library taught a machine", category: "Explainer", published_at: "2026-06-07T00:00:00Z", source_name: "Article" },
+  { id: "6", source_url: "#", plain_title: "Can a computer actually be creative?", category: "Big Question", published_at: "2026-06-06T00:00:00Z", source_name: "Article" },
 ];
 
-export function Archive() {
+function formatShortDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short" }).toUpperCase();
+}
+
+type CardArticle = Pick<Article, "id" | "source_url" | "plain_title" | "category" | "published_at" | "source_name">;
+
+export function Archive({ articles }: { articles: Article[] }) {
+  const editions: CardArticle[] = articles.length >= 3 ? articles.slice(0, 6) : FALLBACK;
+  const n = editions.length;
+
   const [hover, setHover] = useState<number | null>(null);
   const [inView, setInView] = useState(false);
   const [demoHover, setDemoHover] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const n = editions.length;
 
-  // Trigger entrance when section scrolls into view
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
@@ -30,13 +38,12 @@ export function Archive() {
     return () => obs.disconnect();
   }, []);
 
-  // After cards have entered, briefly demo the fan-out to hint interactivity
   useEffect(() => {
     if (!inView) return;
-    const t1 = setTimeout(() => setDemoHover(2), editions.length * 100 + 400);
-    const t2 = setTimeout(() => setDemoHover(null), editions.length * 100 + 1400);
+    const t1 = setTimeout(() => setDemoHover(2), n * 100 + 400);
+    const t2 = setTimeout(() => setDemoHover(null), n * 100 + 1400);
     return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, [inView]);
+  }, [inView, n]);
 
   const activeHover = hover !== null ? hover : demoHover;
 
@@ -59,61 +66,32 @@ export function Archive() {
         }}
       >
         <div>
-          <div
-            style={{
-              fontSize: 12.5,
-              fontWeight: 800,
-              letterSpacing: ".2em",
-              textTransform: "uppercase",
-              color: "#468189",
-              marginBottom: 14,
-            }}
-          >
+          <div style={{ fontSize: 12.5, fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#468189", marginBottom: 14 }}>
             Every edition we&#39;ve sent
           </div>
-          <h2
-            style={{
-              fontFamily: "var(--font-display)",
-              fontWeight: 800,
-              fontSize: 60,
-              lineHeight: 0.95,
-              letterSpacing: "-.025em",
-              margin: 0,
-              color: "#031926",
-            }}
-          >
+          <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 60, lineHeight: 0.95, letterSpacing: "-.025em", margin: 0, color: "#031926" }}>
             The Archive
           </h2>
         </div>
         <Button variant="primary" size="sm" href="#">
-          Browse all 184 →
+          Browse all {articles.length} →
         </Button>
       </div>
 
-      <p
-        style={{
-          fontSize: 13.5,
-          color: "#468189",
-          fontWeight: 600,
-          letterSpacing: ".02em",
-          margin: "14px 0 0",
-          opacity: inView ? 1 : 0,
-          transition: "opacity 0.7s ease 100ms",
-        }}
-      >
+      <p style={{
+        fontSize: 13.5,
+        color: "#468189",
+        fontWeight: 600,
+        letterSpacing: ".02em",
+        margin: "14px 0 0",
+        opacity: inView ? 1 : 0,
+        transition: "opacity 0.7s ease 100ms",
+      }}>
         Hover a spread to pull it from the stack.
       </p>
 
       {/* Fan-out deck */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "flex-end",
-          padding: "64px 0 24px",
-          perspective: 1400,
-        }}
-      >
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-end", padding: "64px 0 24px", perspective: 1400 }}>
         {editions.map((e, i) => {
           const base = (i - (n - 1) / 2) * 4;
           let tx = 0, ty = 0, rot = base, scale = 1, z = i + 1;
@@ -132,7 +110,7 @@ export function Archive() {
 
           return (
             <div
-              key={e.issue}
+              key={e.id}
               style={{
                 marginLeft: i === 0 ? 0 : -74,
                 zIndex: z,
@@ -145,7 +123,10 @@ export function Archive() {
                 filter: `drop-shadow(${shadow})`,
               }}
             >
-              <article
+              <a
+                href={e.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
                 onMouseEnter={() => setHover(i)}
                 onMouseLeave={() => setHover(null)}
                 style={{
@@ -158,88 +139,54 @@ export function Archive() {
                   cursor: "pointer",
                   display: "flex",
                   flexDirection: "column",
+                  textDecoration: "none",
+                  color: "inherit",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontWeight: 800,
-                      fontSize: 20,
-                      letterSpacing: "-.02em",
-                    }}
-                  >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 20, letterSpacing: "-.02em" }}>
                     Article
                   </span>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: 11,
-                      fontWeight: 500,
-                      color: "#468189",
-                    }}
-                  >
-                    No.{e.issue}
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 500, color: "#468189" }}>
+                    {e.source_name}
                   </span>
                 </div>
 
-                <div
-                  style={{
-                    display: "inline-block",
-                    alignSelf: "flex-start",
-                    background: "#9DBEBB",
-                    color: "#031926",
-                    padding: "4px 10px",
-                    borderRadius: 40,
-                    fontSize: 10,
-                    fontWeight: 800,
-                    letterSpacing: ".1em",
-                    textTransform: "uppercase",
-                    margin: "18px 0 12px",
-                  }}
-                >
-                  {e.cat}
+                <div style={{
+                  display: "inline-block",
+                  alignSelf: "flex-start",
+                  background: "#9DBEBB",
+                  color: "#031926",
+                  padding: "4px 10px",
+                  borderRadius: 40,
+                  fontSize: 10,
+                  fontWeight: 800,
+                  letterSpacing: ".1em",
+                  textTransform: "uppercase",
+                  margin: "18px 0 12px",
+                }}>
+                  {e.category}
                 </div>
 
-                <h3
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontWeight: 700,
-                    fontSize: 26,
-                    lineHeight: 1.04,
-                    letterSpacing: "-.02em",
-                    margin: 0,
-                    flex: 1,
-                  }}
-                >
-                  {e.title}
+                <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 26, lineHeight: 1.04, letterSpacing: "-.02em", margin: 0, flex: 1 }}>
+                  {e.plain_title}
                 </h3>
 
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    paddingTop: 14,
-                    borderTop: "2px solid #031926",
-                    fontFamily: "var(--font-mono)",
-                    fontSize: 11,
-                    fontWeight: 500,
-                    color: "#468189",
-                  }}
-                >
-                  <span>{e.date} 2026</span>
-                  <span style={{ color: "#031926", fontWeight: 600 }}>
-                    Read →
-                  </span>
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  paddingTop: 14,
+                  borderTop: "2px solid #031926",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 11,
+                  fontWeight: 500,
+                  color: "#468189",
+                }}>
+                  <span>{formatShortDate(e.published_at)}</span>
+                  <span style={{ color: "#031926", fontWeight: 600 }}>Read →</span>
                 </div>
-              </article>
+              </a>
             </div>
           );
         })}

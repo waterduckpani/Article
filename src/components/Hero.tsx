@@ -1,7 +1,22 @@
 import { Button } from "@/components/ui/Button";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
+import type { Article } from "@/lib/supabase";
 
-export function Hero() {
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).toUpperCase();
+}
+
+export function Hero({ article }: { article: Article | null }) {
+  const title = article?.plain_title ?? "Your phone just learned to plan your week";
+  const summary = article?.plain_summary ?? "Apple and Google quietly switched on assistants that book appointments and draft replies. We lived with both for a week.";
+  const category = article?.category ?? "The Big Story";
+  const date = article ? formatDate(article.published_at) : "12 JUN 2026";
+  const href = article?.source_url ?? "#today";
+
   return (
     <section style={{ background: "#F4E9CD", padding: "100px 64px 120px" }}>
       <div
@@ -14,7 +29,7 @@ export function Hero() {
           margin: "0 auto",
         }}
       >
-        {/* Left: headline + CTAs — now ~60% */}
+        {/* Left: headline + CTAs */}
         <RevealOnScroll delay={0}>
           <div
             style={{
@@ -53,14 +68,7 @@ export function Hero() {
             No jargon, no hype — just the five minutes that actually matter,
             explained like a smart friend would.
           </p>
-          <div
-            style={{
-              display: "flex",
-              gap: 12,
-              alignItems: "center",
-              flexWrap: "wrap",
-            }}
-          >
+          <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
             <Button variant="primary" href="#today">
               Read today&#39;s edition →
             </Button>
@@ -70,18 +78,20 @@ export function Hero() {
           </div>
         </RevealOnScroll>
 
-        {/* Right: Living newspaper front page */}
+        {/* Right: Latest article card */}
         <RevealOnScroll delay={120}>
           <div className="edition-stack" id="today">
-            <a href="#today" className="edition-card-new" style={{
+            <a href={href} target="_blank" rel="noopener noreferrer" className="edition-card-new" style={{
               background: "#FBF6E6",
               border: "1px solid rgba(3,25,38,.1)",
               borderRadius: 18,
               overflow: "hidden",
               boxShadow: "0 44px 90px -54px rgba(3,25,38,.45)",
+              display: "block",
+              textDecoration: "none",
+              color: "inherit",
             }}>
-
-              {/* Typographic masthead — replaces teal image */}
+              {/* Masthead */}
               <div style={{
                 position: "relative",
                 background: "#031926",
@@ -92,7 +102,6 @@ export function Hero() {
                 flexDirection: "column",
                 justifyContent: "flex-end",
               }}>
-                {/* Giant edition number watermark */}
                 <div aria-hidden style={{
                   position: "absolute",
                   top: -18,
@@ -107,42 +116,15 @@ export function Hero() {
                   whiteSpace: "nowrap",
                   pointerEvents: "none",
                 }}>
-                  184
+                  NEW
                 </div>
 
-                {/* Top-right meta labels */}
-                <div style={{
-                  position: "absolute",
-                  top: 18,
-                  right: 18,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-end",
-                  gap: 3,
-                }}>
-                  <span style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: 10,
-                    fontWeight: 500,
-                    color: "#77ACA2",
-                    letterSpacing: ".1em",
-                    textTransform: "uppercase",
-                  }}>
-                    12 JUN 2026
-                  </span>
-                  <span style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: 10,
-                    fontWeight: 500,
-                    color: "#468189",
-                    letterSpacing: ".1em",
-                    textTransform: "uppercase",
-                  }}>
-                    No. 184
+                <div style={{ position: "absolute", top: 18, right: 18, display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 3 }}>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 500, color: "#77ACA2", letterSpacing: ".1em", textTransform: "uppercase" }}>
+                    {date}
                   </span>
                 </div>
 
-                {/* Gold badge top-left */}
                 <div style={{
                   position: "absolute",
                   top: 18,
@@ -156,10 +138,9 @@ export function Hero() {
                   letterSpacing: ".12em",
                   textTransform: "uppercase",
                 }}>
-                  The Big Story
+                  {category}
                 </div>
 
-                {/* Edition headline — large, bold, on dark */}
                 <h3 style={{
                   fontFamily: "var(--font-display)",
                   fontWeight: 800,
@@ -171,20 +152,13 @@ export function Hero() {
                   position: "relative",
                   zIndex: 1,
                 }}>
-                  Your phone just learned to plan your week
+                  {title}
                 </h3>
               </div>
 
               {/* Card body */}
               <div style={{ padding: "22px 28px 26px" }}>
-
-                {/* Live indicator row */}
-                <div style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: 14,
-                }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
                   <span style={{
                     display: "inline-flex",
                     alignItems: "center",
@@ -195,51 +169,15 @@ export function Hero() {
                     textTransform: "uppercase",
                     color: "#468189",
                   }}>
-                    <span className="pulse-dot" style={{
-                      width: 7,
-                      height: 7,
-                      borderRadius: "50%",
-                      background: "#E0A53F",
-                      display: "inline-block",
-                      flexShrink: 0,
-                    }} />
-                    Today&#39;s Edition
-                  </span>
-                  <span style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: 11.5,
-                    fontWeight: 500,
-                    color: "#77ACA2",
-                  }}>
-                    12 JUN · No.184
+                    <span className="pulse-dot" style={{ width: 7, height: 7, borderRadius: "50%", background: "#E0A53F", display: "inline-block", flexShrink: 0 }} />
+                    Latest Story
                   </span>
                 </div>
 
-                <p style={{
-                  fontSize: 15.5,
-                  lineHeight: 1.68,
-                  color: "#3a565b",
-                  margin: "0 0 0",
-                }}>
-                  Apple and Google quietly switched on assistants that book
-                  appointments and draft replies. We lived with both for a week.
+                <p style={{ fontSize: 15.5, lineHeight: 1.68, color: "#3a565b", margin: 0 }}>
+                  {summary}
                 </p>
 
-                {/* Peek content — slides in on hover like lifting a page */}
-                <div className="card-peek">
-                  <p style={{
-                    fontSize: 13.5,
-                    lineHeight: 1.62,
-                    color: "#77ACA2",
-                    margin: "14px 0 0",
-                    paddingTop: 14,
-                    borderTop: "1px dashed rgba(3,25,38,.12)",
-                  }}>
-                    Also: OpenAI&apos;s new reasoning model, Meta&apos;s AR glasses, and why your AI assistant might be wrong about tomorrow&apos;s weather.
-                  </p>
-                </div>
-
-                {/* Footer row */}
                 <div style={{
                   display: "flex",
                   justifyContent: "space-between",
@@ -248,28 +186,14 @@ export function Hero() {
                   marginTop: 20,
                   borderTop: "1px solid rgba(3,25,38,.1)",
                 }}>
-                  <span style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: 11.5,
-                    fontWeight: 500,
-                    letterSpacing: ".08em",
-                    color: "#77ACA2",
-                  }}>
-                    5 MIN READ
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, fontWeight: 500, letterSpacing: ".08em", color: "#77ACA2" }}>
+                    {article?.source_name ?? "Article"}
                   </span>
-                  <span style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 6,
-                    fontSize: 14,
-                    fontWeight: 800,
-                    color: "#468189",
-                  }}>
-                    Read the edition →
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 14, fontWeight: 800, color: "#468189" }}>
+                    Read the story →
                   </span>
                 </div>
               </div>
-
             </a>
           </div>
         </RevealOnScroll>
