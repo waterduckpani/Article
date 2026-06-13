@@ -178,11 +178,31 @@ function SourcesSection({ sources }: { sources: ArticleSource[] }) {
   );
 }
 
+const SECTION_LABEL_RE = /^(HOOK|WHAT'S HAPPENING|THE MECHANISM|WHY IT MATTERS|THE BOTTOM LINE)\s+/;
+
 function renderBlocks(content: string) {
   const blocks = content.split(/\n\n+/);
   return blocks.map((block, i) => {
     const trimmed = block.trim();
     if (!trimmed) return null;
+
+    if (trimmed.startsWith("### ")) {
+      return (
+        <Block key={i} delay={i * 60}>
+          <div style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: ".18em",
+            textTransform: "uppercase",
+            color: "#468189",
+            margin: "32px 0 8px",
+          }}>
+            {trimmed.replace(/^### /, "")}
+          </div>
+        </Block>
+      );
+    }
 
     if (trimmed.startsWith("## ")) {
       return (
@@ -205,7 +225,34 @@ function renderBlocks(content: string) {
       );
     }
 
+    const labelMatch = trimmed.match(SECTION_LABEL_RE);
     const isHook = i === 0;
+
+    if (labelMatch) {
+      const label = labelMatch[1];
+      const body = trimmed.slice(labelMatch[0].length);
+      return (
+        <Block key={i} delay={i * 60}>
+          <div style={{ margin: "0 0 28px" }}>
+            <div style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: ".18em",
+              textTransform: "uppercase",
+              color: "#468189",
+              marginBottom: 8,
+            }}>
+              {label}
+            </div>
+            <p style={{ fontSize: 18, lineHeight: 1.82, color: "#1a3540", margin: 0, fontWeight: 400 }}>
+              {body}
+            </p>
+          </div>
+        </Block>
+      );
+    }
+
     return (
       <Block key={i} delay={i * 60}>
         <p
