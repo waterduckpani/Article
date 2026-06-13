@@ -33,7 +33,7 @@ export function Ticker({ articles }: { articles: Article[] }) {
 
   return (
     <div className="ticker-inner">
-      {/* Label */}
+      {/* Label — dot always visible, text hidden on small screens via CSS */}
       <div style={{ display: "flex", alignItems: "center", gap: 9, flexShrink: 0 }}>
         <span
           style={{
@@ -46,24 +46,15 @@ export function Ticker({ articles }: { articles: Article[] }) {
             flexShrink: 0,
           }}
         />
-        <span
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: 12,
-            fontWeight: 600,
-            letterSpacing: ".2em",
-            textTransform: "uppercase",
-            color: "#9DBEBB",
-          }}
-        >
+        <span className="ticker-label-text">
           On the wire
         </span>
       </div>
 
-      <div style={{ width: 1, height: 28, background: "rgba(157,190,187,.3)", flexShrink: 0 }} />
+      <div className="ticker-separator" />
 
-      {/* Headline */}
-      <div style={{ flex: 1, height: 32, overflow: "hidden", position: "relative" }}>
+      {/* Headline — single line, clips with overflow hidden */}
+      <div style={{ flex: 1, minWidth: 0, height: 28, overflow: "hidden", position: "relative" }}>
         <div
           key={animKey}
           style={{
@@ -73,9 +64,11 @@ export function Ticker({ articles }: { articles: Article[] }) {
             alignItems: "center",
             fontFamily: "var(--font-display)",
             fontWeight: 600,
-            fontSize: 21,
+            fontSize: "clamp(14px, 3.8vw, 21px)",
             letterSpacing: "-.01em",
             color: "#F4E9CD",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
             animation: "flipIn .6s cubic-bezier(.2,.8,.2,1)",
           }}
         >
@@ -116,7 +109,7 @@ export function Ticker({ articles }: { articles: Article[] }) {
         </a>
       )}
 
-      {/* Counter */}
+      {/* Counter — hidden on mobile via CSS */}
       <div className="ticker-counter" style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "#77ACA2", flexShrink: 0 }}>
         {String(tick + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
       </div>

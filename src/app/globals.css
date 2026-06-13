@@ -508,6 +508,23 @@ body {
   gap: 28px;
 }
 
+.ticker-label-text {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #9DBEBB;
+  white-space: nowrap;
+}
+
+.ticker-separator {
+  width: 1px;
+  height: 28px;
+  background: rgba(157,190,187,.3);
+  flex-shrink: 0;
+}
+
 .ticker-counter { display: block; }
 
 /* ── Archive Page ── */
@@ -571,7 +588,9 @@ body {
   .navbar-hamburger { display: flex; }
 
   /* Ticker */
-  .ticker-inner { padding: 0 20px; gap: 14px; height: 56px; }
+  .ticker-inner { padding: 0 16px; gap: 10px; height: 52px; }
+  .ticker-label-text { display: none; }
+  .ticker-separator { display: none; }
   .ticker-counter { display: none; }
 
   /* Hero */
