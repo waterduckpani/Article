@@ -28,7 +28,7 @@ function MobileCard({ e }: { e: CardArticle }) {
     if (!el) return;
     const obs = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { threshold: 0.25 }
+      { threshold: 0.1 }
     );
     obs.observe(el);
     return () => obs.disconnect();
