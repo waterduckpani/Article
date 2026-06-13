@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Hanken_Grotesk, Spline_Sans_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
-import { Loader } from "@/components/Loader";
+import { PageLoader } from "@/components/PageLoader";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -41,7 +41,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${bricolage.variable} ${hanken.variable} ${splineMono.variable}`}>
       <body>
-        <Loader />
+        <PageLoader />
         <div className="page-reveal">{children}</div>
         <SpeedInsights />
       </body>

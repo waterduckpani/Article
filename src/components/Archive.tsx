@@ -129,7 +129,7 @@ export function Archive({ articles }: { articles: Article[] }) {
   const activeHover = hover !== null ? hover : demoHover;
 
   return (
-    <section ref={sectionRef} id="archive" className="archive-section">
+    <section ref={sectionRef} id="vault" className="archive-section">
       {/* Header */}
       <div
         className="archive-header"
@@ -144,10 +144,10 @@ export function Archive({ articles }: { articles: Article[] }) {
             Every edition we&#39;ve sent
           </div>
           <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(40px, 6vw, 60px)", lineHeight: 0.95, letterSpacing: "-.025em", margin: 0, color: "#031926" }}>
-            The Archive
+            The Vault
           </h2>
         </div>
-        <Button variant="primary" size="sm" href="/archive">
+        <Button variant="primary" size="sm" href="/vault">
           Browse all {articles.length} →
         </Button>
       </div>

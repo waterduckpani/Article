@@ -1,4 +1,4 @@
-const links = ["Today", "Archive", "What is AI?", "About"];
+const links = ["Today", "Vault", "What is AI?", "About"];
 
 export function Footer() {
   return (
