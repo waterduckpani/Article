@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Hanken_Grotesk, Spline_Sans_Mono } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { Loader } from "@/components/Loader";
 
@@ -42,6 +43,7 @@ export default function RootLayout({
       <body>
         <Loader />
         <div className="page-reveal">{children}</div>
+        <SpeedInsights />
       </body>
     </html>
   );

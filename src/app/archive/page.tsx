@@ -19,9 +19,8 @@ export default async function Archive() {
       <main style={{ background: "#F4E9CD", minHeight: "100vh" }}>
 
         {/* Page header */}
-        <div style={{
+        <div className="page-hero-header" style={{
           background: "#031926",
-          padding: "120px 56px 80px",
           position: "relative",
           overflow: "hidden",
         }}>
@@ -41,7 +40,7 @@ export default async function Archive() {
             A
           </div>
 
-          <div style={{ maxWidth: 1280, margin: "0 auto", position: "relative", zIndex: 1 }}>
+          <div style={{ maxWidth: 1280, margin: "0 auto", position: "relative", zIndex: 1, padding: "0 0" }}>
             <a
               href="/"
               className="nav-link"
@@ -96,7 +95,7 @@ export default async function Archive() {
         </div>
 
         {/* Filter + grid */}
-        <div style={{ paddingTop: 56 }}>
+        <div style={{ paddingTop: "clamp(32px, 5vw, 56px)" }}>
           <ArchivePage articles={articles} />
         </div>
 

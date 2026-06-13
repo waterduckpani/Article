@@ -39,9 +39,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
         {/* Dark hero header */}
         <div
+          className="page-hero-header"
           style={{
             background: "#031926",
-            padding: "120px 32px 80px",
             position: "relative",
             overflow: "hidden",
           }}

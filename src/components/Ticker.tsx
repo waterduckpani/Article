@@ -32,17 +32,7 @@ export function Ticker({ articles }: { articles: Article[] }) {
   const href = current.id ? `/articles/${current.id}` : null;
 
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        background: "#031926",
-        color: "#F4E9CD",
-        padding: "0 56px",
-        height: 64,
-        gap: 28,
-      }}
-    >
+    <div className="ticker-inner">
       {/* Label */}
       <div style={{ display: "flex", alignItems: "center", gap: 9, flexShrink: 0 }}>
         <span
@@ -127,7 +117,7 @@ export function Ticker({ articles }: { articles: Article[] }) {
       )}
 
       {/* Counter */}
-      <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "#77ACA2", flexShrink: 0 }}>
+      <div className="ticker-counter" style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "#77ACA2", flexShrink: 0 }}>
         {String(tick + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
       </div>
     </div>

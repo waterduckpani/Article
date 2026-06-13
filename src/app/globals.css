@@ -254,6 +254,356 @@ body {
   box-shadow: -5px 5px 0 0 #031926;
 }
 
+/* ─────────────────────────────────────────
+   RESPONSIVE SYSTEM
+   Breakpoints: 768px (tablet/mobile), 480px (small mobile)
+───────────────────────────────────────── */
+
+/* ── Navbar ── */
+.navbar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 56px;
+  border-bottom: 2px solid #031926;
+  background: #F4E9CD;
+}
+
+.navbar-tagline { display: inline; }
+
+.navbar-links {
+  display: flex;
+  gap: 30px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #031926;
+  border-radius: 2px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.2s ease,
+              width 0.3s ease;
+}
+
+/* Animate bars → X when open */
+.navbar-hamburger.open span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+.navbar-hamburger.open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.navbar-hamburger.open span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Menu: always in DOM (portal), transition visibility/opacity */
+.nav-mobile-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 40px 24px;
+  position: fixed;
+  inset: 0;
+  background: #F4E9CD;
+  z-index: 10000;
+
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-12px) scale(0.98);
+  transition:
+    opacity 0.32s ease,
+    transform 0.38s cubic-bezier(0.2, 0.8, 0.2, 1),
+    visibility 0s linear 0.38s;
+}
+
+.nav-mobile-menu.open {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity 0.32s ease,
+    transform 0.38s cubic-bezier(0.2, 0.8, 0.2, 1),
+    visibility 0s linear 0s;
+}
+
+.nav-mobile-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 22px;
+  color: #031926;
+  padding: 8px;
+  line-height: 1;
+}
+
+.nav-mobile-brand {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 36px;
+  color: #031926;
+  text-decoration: none;
+  letter-spacing: -.02em;
+  margin-bottom: 4px;
+}
+
+.nav-mobile-link {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 22px;
+  color: #031926;
+  text-decoration: none;
+  letter-spacing: .02em;
+  position: relative;
+  padding-bottom: 3px;
+}
+
+.nav-mobile-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #468189;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.nav-mobile-link:hover::after { transform: scaleX(1); }
+
+/* ── Hero ── */
+.hero-section { padding: 100px 64px 120px; background: #F4E9CD; }
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 88px;
+  align-items: center;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* ── WhatIsAI ── */
+.whatis-section { padding: 90px 56px; background: #E0A53F; color: #031926; }
+
+.whatis-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 72px;
+  align-items: start;
+}
+
+/* ── Archive card flip entrance (short-edge = rotateX, top-to-face) ── */
+.archive-mobile-flip {
+  opacity: 0;
+  transform: perspective(700px) rotateX(-80deg);
+  transform-origin: top center;
+  backface-visibility: hidden;
+}
+
+.archive-mobile-flip-in {
+  opacity: 1;
+  transform: perspective(700px) rotateX(0deg);
+  transition:
+    opacity 0.5s ease,
+    transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* ── Archive ── */
+.archive-section {
+  padding: 74px 56px 84px;
+  background: #F4E9CD;
+  border-top: 1px solid rgba(3,25,38,.1);
+}
+
+.archive-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 6px;
+}
+
+.archive-deck-fan {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 64px 0 24px;
+  perspective: 1400px;
+}
+
+.archive-deck-mobile {
+  display: none;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  padding: 32px 0 0;
+  perspective: 900px;
+}
+
+/* ── Email Signup ── */
+.signup-section {
+  background: #031926;
+  color: #F4E9CD;
+  padding: 84px 56px;
+  text-align: center;
+}
+
+.signup-form {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ── Footer ── */
+.footer-inner { padding: 44px 56px; }
+
+/* ── Ticker ── */
+.ticker-inner {
+  display: flex;
+  align-items: center;
+  background: #031926;
+  color: #F4E9CD;
+  padding: 0 56px;
+  height: 64px;
+  gap: 28px;
+}
+
+.ticker-counter { display: block; }
+
+/* ── Archive Page ── */
+.archive-page-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 56px 100px;
+}
+
+/* ── Archive Card (ArchivePage grid) ── */
+.archive-grid-card {
+  width: 100%;
+  min-height: 368px;
+  background: #FBF5E4;
+  border: 2px solid #031926;
+  border-radius: 6px;
+  padding: 24px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ── Archive articles grid ── */
+.archive-articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(282px, 1fr));
+  gap: 28px;
+  align-items: start;
+}
+
+/* ── View toggle (mobile only) ── */
+.archive-view-toggle {
+  display: none;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── WhatIsAI Page Journey ── */
+.whatis-journey { display: block; }
+
+.whatis-journey-mobile {
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  padding: 48px 20px;
+  border-top: 2px solid #031926;
+  border-bottom: 2px solid #031926;
+}
+
+/* ── Page headers (archive/article) ── */
+.page-hero-header { padding: 120px 56px 80px; }
+
+/* ─── 768px — tablet / mobile ─── */
+@media (max-width: 768px) {
+  /* Navbar */
+  .navbar-header { padding: 16px 20px; }
+  .navbar-tagline { display: none; }
+  .navbar-links { display: none; }
+  .navbar-hamburger { display: flex; }
+
+  /* Ticker */
+  .ticker-inner { padding: 0 20px; gap: 14px; height: 56px; }
+  .ticker-counter { display: none; }
+
+  /* Hero */
+  .hero-section { padding: 56px 20px 72px; }
+  .hero-grid { grid-template-columns: 1fr; gap: 44px; }
+
+  /* WhatIsAI */
+  .whatis-section { padding: 56px 20px; }
+  .whatis-grid { grid-template-columns: 1fr; gap: 40px; }
+
+  /* Archive */
+  .archive-section { padding: 48px 20px 56px; }
+  .archive-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .archive-deck-fan { display: none; }
+  .archive-deck-mobile { display: grid; }
+
+  /* Email Signup */
+  .signup-section { padding: 56px 20px; }
+  .signup-form { flex-direction: column; align-items: stretch; }
+  .signup-form .btn { justify-content: center; }
+
+  /* Footer */
+  .footer-inner { padding: 28px 20px; }
+
+  /* Archive Page */
+  .archive-page-container { padding: 0 20px 60px; }
+  .archive-view-toggle { display: flex; }
+
+  /* Page headers */
+  .page-hero-header { padding: 80px 20px 56px; }
+
+  /* WhatIsAI Journey */
+  .whatis-journey { display: none; }
+  .whatis-journey-mobile { display: flex; }
+}
+
+@media (max-width: 480px) {
+  .archive-deck-mobile { grid-template-columns: 1fr; }
+  .ticker-inner { padding: 0 16px; gap: 10px; }
+}
+
 /* ── Paper grain overlay ── */
 body::before {
   content: "";

@@ -1,15 +1,16 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { Article } from "@/lib/supabase";
 
 type SortKey = "newest" | "oldest" | "popular";
 type MatchType = "title" | "article" | "both";
+type ViewCols = "2" | "1";
 
 function formatShortDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short" }).toUpperCase();
 }
 
-function ArchiveCard({ article, matchType }: { article: Article; matchType?: MatchType }) {
+function ArchiveCard({ article, matchType, compact = false }: { article: Article; matchType?: MatchType; compact?: boolean }) {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -17,18 +18,10 @@ function ArchiveCard({ article, matchType }: { article: Article; matchType?: Mat
       href={`/articles/${article.id}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      className="archive-grid-card"
       style={{
-        width: 282,
-        minHeight: 368,
-        background: "#FBF5E4",
-        border: "2px solid #031926",
-        borderRadius: 6,
-        padding: 24,
-        cursor: "pointer",
-        display: "flex",
-        flexDirection: "column",
-        textDecoration: "none",
-        color: "inherit",
+        padding: compact ? 16 : 24,
+        minHeight: compact ? 0 : 368,
         transform: hovered ? "translateY(-6px)" : "translateY(0)",
         boxShadow: hovered
           ? "0 24px 48px -20px rgba(3,25,38,.5)"
@@ -36,30 +29,32 @@ function ArchiveCard({ article, matchType }: { article: Article; matchType?: Mat
         transition: "transform 0.28s cubic-bezier(.2,.85,.25,1), box-shadow 0.28s ease",
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 20, letterSpacing: "-.02em" }}>
-          Article
-        </span>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 500, color: "#468189" }}>
-          {article.source_name?.split(",")[0]?.trim() || "Article"}
-        </span>
-      </div>
+      {!compact && (
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 0 }}>
+          <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 20, letterSpacing: "-.02em" }}>
+            Article
+          </span>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 500, color: "#468189" }}>
+            {article.source_name?.split(",")[0]?.trim() || "Article"}
+          </span>
+        </div>
+      )}
 
-      <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", margin: "18px 0 12px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", margin: compact ? "0 0 8px" : "18px 0 12px" }}>
         <div style={{
           display: "inline-block",
           background: "#9DBEBB",
           color: "#031926",
-          padding: "4px 10px",
+          padding: compact ? "3px 8px" : "4px 10px",
           borderRadius: 40,
-          fontSize: 10,
+          fontSize: compact ? 9 : 10,
           fontWeight: 800,
           letterSpacing: ".1em",
           textTransform: "uppercase",
         }}>
           {article.category}
         </div>
-        {matchType && (
+        {!compact && matchType && (
           <div style={{
             display: "inline-block",
             background: "#E0A53F",
@@ -79,10 +74,10 @@ function ArchiveCard({ article, matchType }: { article: Article; matchType?: Mat
       <h3 style={{
         fontFamily: "var(--font-display)",
         fontWeight: 700,
-        fontSize: 24,
-        lineHeight: 1.08,
+        fontSize: compact ? 15 : 24,
+        lineHeight: compact ? 1.2 : 1.08,
         letterSpacing: "-.02em",
-        margin: "0 0 12px",
+        margin: compact ? "0 0 10px" : "0 0 12px",
         flex: 1,
       }}>
         {article.plain_title}
@@ -92,17 +87,39 @@ function ArchiveCard({ article, matchType }: { article: Article; matchType?: Mat
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingTop: 14,
+        paddingTop: compact ? 10 : 14,
         borderTop: "2px solid #031926",
         fontFamily: "var(--font-mono)",
-        fontSize: 11,
+        fontSize: compact ? 10 : 11,
         fontWeight: 500,
         color: "#468189",
       }}>
         <span>{formatShortDate(article.published_at)}</span>
-        <span style={{ color: "#031926", fontWeight: 600 }}>Read →</span>
+        <span style={{ color: "#031926", fontWeight: 600 }}>{compact ? "→" : "Read →"}</span>
       </div>
     </a>
+  );
+}
+
+/* ── View-toggle icons ── */
+function IconGrid2() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+      <rect x="1" y="1" width="6" height="6" rx="1.2" />
+      <rect x="9" y="1" width="6" height="6" rx="1.2" />
+      <rect x="1" y="9" width="6" height="6" rx="1.2" />
+      <rect x="9" y="9" width="6" height="6" rx="1.2" />
+    </svg>
+  );
+}
+
+function IconGrid1() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+      <rect x="1" y="1" width="14" height="4.5" rx="1.2" />
+      <rect x="1" y="6.75" width="14" height="4.5" rx="1.2" />
+      <rect x="1" y="12.5" width="14" height="2.5" rx="1.2" />
+    </svg>
   );
 }
 
@@ -131,6 +148,15 @@ export function ArchivePage({ articles }: { articles: Article[] }) {
   const [sort, setSort] = useState<SortKey>("newest");
   const [activeCategory, setActiveCategory] = useState("All");
   const [query, setQuery] = useState("");
+  const [viewCols, setViewCols] = useState<ViewCols>("2");
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const categories = useMemo(() => {
     const cats = Array.from(new Set(articles.map((a) => a.category).filter(Boolean))).sort();
@@ -155,8 +181,19 @@ export function ArchivePage({ articles }: { articles: Article[] }) {
     return result;
   }, [articles, sort, activeCategory, query]);
 
+  const btnBase: React.CSSProperties = {
+    padding: "7px 16px",
+    borderRadius: 40,
+    fontFamily: "var(--font-body)",
+    fontSize: 13,
+    fontWeight: 700,
+    letterSpacing: ".02em",
+    cursor: "pointer",
+    transition: "all 0.18s ease",
+  };
+
   return (
-    <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 56px 100px" }}>
+    <div className="archive-page-container">
 
       {/* Search bar */}
       <div style={{ marginBottom: 32 }}>
@@ -250,17 +287,10 @@ export function ArchivePage({ articles }: { articles: Article[] }) {
                 key={s}
                 onClick={() => setSort(s)}
                 style={{
-                  padding: "7px 16px",
-                  borderRadius: 40,
+                  ...btnBase,
                   border: sort === s ? "2px solid #031926" : "2px solid rgba(3,25,38,.18)",
                   background: sort === s ? "#031926" : "transparent",
                   color: sort === s ? "#F4E9CD" : "#3a565b",
-                  fontFamily: "var(--font-body)",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  letterSpacing: ".02em",
-                  cursor: "pointer",
-                  transition: "all 0.18s ease",
                 }}
               >
                 {SORT_LABELS[s]}
@@ -287,17 +317,10 @@ export function ArchivePage({ articles }: { articles: Article[] }) {
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
                 style={{
-                  padding: "7px 16px",
-                  borderRadius: 40,
+                  ...btnBase,
                   border: activeCategory === cat ? "2px solid #468189" : "2px solid rgba(3,25,38,.18)",
                   background: activeCategory === cat ? "#468189" : "transparent",
                   color: activeCategory === cat ? "#F4E9CD" : "#3a565b",
-                  fontFamily: "var(--font-body)",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  letterSpacing: ".02em",
-                  cursor: "pointer",
-                  transition: "all 0.18s ease",
                 }}
               >
                 {cat}
@@ -306,33 +329,85 @@ export function ArchivePage({ articles }: { articles: Article[] }) {
           </div>
         </div>
 
-        {/* Result count */}
+        {/* Right: count + view toggle */}
         <div style={{
           marginLeft: "auto",
           alignSelf: "flex-end",
-          fontFamily: "var(--font-mono)",
-          fontSize: 12,
-          fontWeight: 600,
-          color: "#77ACA2",
-          letterSpacing: ".06em",
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
           paddingBottom: 2,
         }}>
-          {sorted.length} {sorted.length === 1 ? "story" : "stories"}
+          <span style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 12,
+            fontWeight: 600,
+            color: "#77ACA2",
+            letterSpacing: ".06em",
+          }}>
+            {sorted.length} {sorted.length === 1 ? "story" : "stories"}
+          </span>
+
+          {/* View toggle — only visible on mobile via CSS */}
+          <div className="archive-view-toggle">
+            <button
+              onClick={() => setViewCols("2")}
+              aria-label="2 column view"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 32,
+                height: 32,
+                borderRadius: 6,
+                border: "2px solid",
+                borderColor: viewCols === "2" ? "#031926" : "rgba(3,25,38,.18)",
+                background: viewCols === "2" ? "#031926" : "transparent",
+                color: viewCols === "2" ? "#F4E9CD" : "#3a565b",
+                cursor: "pointer",
+                transition: "all 0.18s ease",
+              }}
+            >
+              <IconGrid2 />
+            </button>
+            <button
+              onClick={() => setViewCols("1")}
+              aria-label="1 column view"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 32,
+                height: 32,
+                borderRadius: 6,
+                border: "2px solid",
+                borderColor: viewCols === "1" ? "#031926" : "rgba(3,25,38,.18)",
+                background: viewCols === "1" ? "#031926" : "transparent",
+                color: viewCols === "1" ? "#F4E9CD" : "#3a565b",
+                cursor: "pointer",
+                transition: "all 0.18s ease",
+              }}
+            >
+              <IconGrid1 />
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Grid */}
       {sorted.length > 0 ? (
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(282px, 1fr))",
-          gap: 28,
-          alignItems: "start",
-        }}>
+        <div
+          className="archive-articles-grid"
+          style={isMobile ? {
+            gridTemplateColumns: viewCols === "2" ? "repeat(2, 1fr)" : "1fr",
+            gap: viewCols === "2" ? 12 : 20,
+          } : undefined}
+        >
           {sorted.map((article) => (
             <ArchiveCard
               key={article.id}
               article={article}
+              compact={isMobile && viewCols === "2"}
               matchType={query.trim().length >= 2 ? (getMatchType(article, query.trim()) ?? undefined) : undefined}
             />
           ))}

@@ -14,15 +14,7 @@ export function EmailSignup() {
   }
 
   return (
-    <section
-      id="signup"
-      style={{
-        background: "#031926",
-        color: "#F4E9CD",
-        padding: "84px 56px",
-        textAlign: "center",
-      }}
-    >
+    <section id="signup" className="signup-section">
       <RevealOnScroll>
         <div
           style={{
@@ -41,7 +33,7 @@ export function EmailSignup() {
           style={{
             fontFamily: "var(--font-display)",
             fontWeight: 800,
-            fontSize: 58,
+            fontSize: "clamp(36px, 5.5vw, 58px)",
             lineHeight: 1.02,
             letterSpacing: "-.025em",
             margin: "0 auto 18px",
@@ -64,16 +56,7 @@ export function EmailSignup() {
           Unsubscribe anytime — no hard feelings.
         </p>
 
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            display: "flex",
-            gap: 10,
-            justifyContent: "center",
-            maxWidth: 520,
-            margin: "0 auto",
-          }}
-        >
+        <form onSubmit={handleSubmit} className="signup-form">
           <input
             type="email"
             value={email}

@@ -21,10 +21,7 @@ const concepts = [
 
 export function WhatIsAI() {
   return (
-    <section
-      id="whatis"
-      style={{ background: "#E0A53F", color: "#031926", padding: "90px 56px" }}
-    >
+    <section id="whatis" className="whatis-section">
       {/* Thin editorial rule at top */}
       <div
         style={{
@@ -35,14 +32,7 @@ export function WhatIsAI() {
         }}
       />
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 72,
-          alignItems: "start",
-        }}
-      >
+      <div className="whatis-grid">
         {/* Left: text */}
         <RevealOnScroll delay={0}>
           <div
@@ -61,7 +51,7 @@ export function WhatIsAI() {
             style={{
               fontFamily: "var(--font-display)",
               fontWeight: 800,
-              fontSize: 64,
+              fontSize: "clamp(48px, 6vw, 64px)",
               lineHeight: 0.95,
               letterSpacing: "-.03em",
               margin: "0 0 24px",

@@ -18,17 +18,8 @@ export function Hero({ article }: { article: Article | null }) {
   const href = article ? `/articles/${article.id}` : "/archive";
 
   return (
-    <section style={{ background: "#F4E9CD", padding: "100px 64px 120px" }}>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "3fr 2fr",
-          gap: 88,
-          alignItems: "center",
-          maxWidth: 1280,
-          margin: "0 auto",
-        }}
-      >
+    <section className="hero-section">
+      <div className="hero-grid">
         {/* Left: headline + CTAs */}
         <RevealOnScroll delay={0}>
           <div
@@ -47,7 +38,7 @@ export function Hero({ article }: { article: Article | null }) {
             style={{
               fontFamily: "var(--font-display)",
               fontWeight: 800,
-              fontSize: 92,
+              fontSize: "clamp(52px, 7.5vw, 92px)",
               lineHeight: 1.0,
               letterSpacing: "-.03em",
               color: "#031926",
@@ -58,7 +49,7 @@ export function Hero({ article }: { article: Article | null }) {
           </h1>
           <p
             style={{
-              fontSize: 20,
+              fontSize: "clamp(16px, 2vw, 20px)",
               lineHeight: 1.78,
               color: "#3a565b",
               maxWidth: "28em",

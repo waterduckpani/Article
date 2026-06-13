@@ -118,7 +118,7 @@ export function WhatIsAIPage() {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          padding: "80px 40px",
+          padding: "80px 20px",
           textAlign: "center",
           position: "relative",
           overflow: "hidden",
@@ -180,9 +180,10 @@ export function WhatIsAIPage() {
         </div>
       </section>
 
-      {/* ── SCROLL JOURNEY ───────────────────────────────── */}
+      {/* ── SCROLL JOURNEY (desktop) ─────────────────────── */}
       <section
         ref={containerRef}
+        className="whatis-journey"
         style={{
           position: "relative",
           height: VB_H,
@@ -321,11 +322,48 @@ export function WhatIsAIPage() {
         })}
       </section>
 
+      {/* ── MOBILE JOURNEY (stacked cards, no SVG) ───────── */}
+      <div className="whatis-journey-mobile">
+        <div style={{
+          fontSize: 10, fontWeight: 700, letterSpacing: ".2em",
+          textTransform: "uppercase", color: "rgba(3,25,38,.22)",
+          textAlign: "center", marginBottom: 8,
+        }}>
+          Five ideas · five minutes
+        </div>
+        {CONCEPTS.map((c, i) => (
+          <div key={i} style={{
+            background: c.bg,
+            color: c.fg,
+            borderRadius: 14,
+            padding: "24px 24px",
+            boxShadow: "0 6px 24px rgba(3,25,38,.1)",
+          }}>
+            <div style={{
+              fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 600,
+              opacity: 0.45, letterSpacing: ".12em", textTransform: "uppercase",
+              marginBottom: 10,
+            }}>
+              {c.num} / 05
+            </div>
+            <div style={{
+              fontFamily: "var(--font-display)", fontWeight: 800,
+              fontSize: 21, letterSpacing: "-.02em", lineHeight: 1.15, marginBottom: 12,
+            }}>
+              {c.title}
+            </div>
+            <p style={{ fontSize: 14, lineHeight: 1.65, margin: 0, opacity: 0.84 }}>
+              {c.body}
+            </p>
+          </div>
+        ))}
+      </div>
+
       {/* ── CTA ──────────────────────────────────────────── */}
       <section style={{
         minHeight: "55vh", display: "flex", flexDirection: "column",
         justifyContent: "center", alignItems: "center",
-        padding: "80px 56px", textAlign: "center",
+        padding: "80px clamp(20px, 5vw, 56px)", textAlign: "center",
         background: "#031926", color: "#F4E9CD",
       }}>
         <div style={{

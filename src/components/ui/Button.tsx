@@ -27,7 +27,7 @@ export function Button({
 
   if (href) {
     return (
-      <a href={href} className={cls} style={style}>
+      <a href={href} className={cls} style={style} onClick={onClick}>
         {children}
       </a>
     );

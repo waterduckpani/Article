@@ -18,6 +18,87 @@ function formatShortDate(iso: string) {
 
 type CardArticle = Pick<Article, "id" | "source_url" | "plain_title" | "category" | "published_at" | "source_name">;
 
+function MobileCard({ e }: { e: CardArticle }) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const [visible, setVisible] = useState(false);
+  const href = e.source_url === "#" ? "#" : `/articles/${e.id}`;
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold: 0.25 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <a
+      ref={ref}
+      href={href}
+      className={`archive-mobile-flip${visible ? " archive-mobile-flip-in" : ""}`}
+      style={{
+        background: "#FBF5E4",
+        border: "2px solid #031926",
+        borderRadius: 6,
+        padding: 24,
+        display: "flex",
+        flexDirection: "column",
+        textDecoration: "none",
+        color: "inherit",
+        minHeight: 280,
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 20, letterSpacing: "-.02em" }}>
+          Article
+        </span>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 500, color: "#468189" }}>
+          {e.source_name?.split(",")[0]?.trim() || "Article"}
+        </span>
+      </div>
+
+      <div style={{
+        display: "inline-block",
+        alignSelf: "flex-start",
+        background: "#9DBEBB",
+        color: "#031926",
+        padding: "4px 10px",
+        borderRadius: 40,
+        fontSize: 10,
+        fontWeight: 800,
+        letterSpacing: ".1em",
+        textTransform: "uppercase",
+        margin: "16px 0 12px",
+      }}>
+        {e.category}
+      </div>
+
+      <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, lineHeight: 1.1, letterSpacing: "-.02em", margin: "0 0 auto", flex: 1 }}>
+        {e.plain_title}
+      </h3>
+
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingTop: 14,
+        marginTop: 16,
+        borderTop: "2px solid #031926",
+        fontFamily: "var(--font-mono)",
+        fontSize: 11,
+        fontWeight: 500,
+        color: "#468189",
+      }}>
+        <span>{formatShortDate(e.published_at)}</span>
+        <span style={{ color: "#031926", fontWeight: 600 }}>Read →</span>
+      </div>
+    </a>
+  );
+}
+
 export function Archive({ articles }: { articles: Article[] }) {
   const editions: CardArticle[] = articles.length >= 3 ? articles.slice(0, 6) : FALLBACK;
   const n = editions.length;
@@ -48,28 +129,21 @@ export function Archive({ articles }: { articles: Article[] }) {
   const activeHover = hover !== null ? hover : demoHover;
 
   return (
-    <section
-      ref={sectionRef}
-      id="archive"
-      style={{ padding: "74px 56px 84px", background: "#F4E9CD", borderTop: "1px solid rgba(3,25,38,.1)" }}
-    >
+    <section ref={sectionRef} id="archive" className="archive-section">
       {/* Header */}
       <div
+        className="archive-header"
         style={{
           opacity: inView ? 1 : 0,
           transform: inView ? "translateY(0)" : "translateY(28px)",
           transition: "opacity 0.7s ease, transform 0.7s cubic-bezier(0.2,0.8,0.2,1)",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-end",
-          marginBottom: 6,
         }}
       >
         <div>
           <div style={{ fontSize: 12.5, fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#468189", marginBottom: 14 }}>
             Every edition we&#39;ve sent
           </div>
-          <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 60, lineHeight: 0.95, letterSpacing: "-.025em", margin: 0, color: "#031926" }}>
+          <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(40px, 6vw, 60px)", lineHeight: 0.95, letterSpacing: "-.025em", margin: 0, color: "#031926" }}>
             The Archive
           </h2>
         </div>
@@ -90,8 +164,8 @@ export function Archive({ articles }: { articles: Article[] }) {
         Hover a spread to pull it from the stack.
       </p>
 
-      {/* Fan-out deck */}
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-end", padding: "64px 0 24px", perspective: 1400 }}>
+      {/* Fan-out deck — hidden on mobile via CSS */}
+      <div className="archive-deck-fan">
         {editions.map((e, i) => {
           const base = (i - (n - 1) / 2) * 4;
           let tx = 0, ty = 0, rot = base, scale = 1, z = i + 1;
@@ -188,6 +262,13 @@ export function Archive({ articles }: { articles: Article[] }) {
             </div>
           );
         })}
+      </div>
+
+      {/* Mobile card grid — shown only on mobile via CSS */}
+      <div className="archive-deck-mobile">
+        {editions.map((e) => (
+          <MobileCard key={e.id} e={e} />
+        ))}
       </div>
     </section>
   );

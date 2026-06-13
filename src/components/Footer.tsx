@@ -3,8 +3,8 @@ const links = ["Today", "Archive", "What is AI?", "About"];
 export function Footer() {
   return (
     <footer
+      className="footer-inner"
       style={{
-        padding: "44px 56px",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",

@@ -294,7 +294,7 @@ export function ArticleBody({
         style={{
           maxWidth: 760,
           margin: "0 auto",
-          padding: "72px 32px 24px",
+          padding: "72px clamp(16px, 4vw, 32px) 24px",
           opacity: bodyInView ? 1 : 0,
           transition: "opacity 0.5s ease",
         }}
