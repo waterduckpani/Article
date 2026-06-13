@@ -80,7 +80,7 @@ body {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  transition: transform 0.2s ease, color 0.38s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, color 0.38s ease;
   white-space: nowrap;
 }
 
@@ -96,7 +96,7 @@ body {
 }
 
 .btn:hover::before { transform: translateX(0); }
-.btn:hover { transform: translateY(-2px); }
+.btn:active { transition-duration: 0.08s; }
 
 /* Primary — ink, teal wipes in from left */
 .btn-primary {
@@ -105,8 +105,17 @@ body {
   border-radius: 40px;
   padding: 16px 30px;
   font-size: 16px;
+  box-shadow: 0 5px 0 0 #031926, 0 8px 22px -6px rgba(3,25,38,.35);
 }
 .btn-primary::before { background: #468189; }
+.btn-primary:hover {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 0 #031926, 0 2px 8px -4px rgba(3,25,38,.2);
+}
+.btn-primary:active {
+  transform: translateY(5px);
+  box-shadow: 0 0px 0 0 transparent, 0 1px 4px -2px rgba(3,25,38,.15);
+}
 
 /* Secondary — gold, mist wipes in from left */
 .btn-secondary {
@@ -115,8 +124,17 @@ body {
   border-radius: 40px;
   padding: 16px 30px;
   font-size: 16px;
+  box-shadow: 0 5px 0 0 #E0A53F, 0 8px 22px -6px rgba(3,25,38,.2);
 }
 .btn-secondary::before { background: #9DBEBB; }
+.btn-secondary:hover {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 0 #E0A53F, 0 2px 8px -4px rgba(3,25,38,.15);
+}
+.btn-secondary:active {
+  transform: translateY(5px);
+  box-shadow: 0 0px 0 0 transparent, 0 1px 4px -2px rgba(3,25,38,.1);
+}
 
 /* Size modifier */
 .btn-sm { padding: 11px 22px; font-size: 14px; }

@@ -363,12 +363,42 @@ async function run() {
     return;
   }
 
-  // Stage 2: elect The Big Story — the cluster backed by the most source articles
-  const bigStoryIdx = pending.reduce(
-    (best, p, i) => p.sourceCount > pending[best].sourceCount ? i : best,
-    0
-  );
-  console.log(`Big story elected: "${pending[bigStoryIdx].article.plain_title}" (${pending[bigStoryIdx].sourceCount} sources)`);
+  // Stage 2: elect The Big Story — ask the LLM which story has the most real-world impact
+  let bigStoryIdx = 0;
+  try {
+    const candidates = pending.map((p, i) =>
+      `${i}: ${p.article.plain_title}\n   ${p.article.plain_summary}`
+    ).join("\n\n");
+
+    const electionRes = await openrouter.chat.completions.create({
+      model: SUMMARIZER_MODEL,
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are the editor of Article, an AI newsletter. Given a list of today's stories, pick the single most important one to be 'The Big Story' — the one with the broadest real-world impact, the most significant shift in how AI affects everyday people, or the highest stakes for society. Ignore hype. Prefer concrete consequences over announcements. Return JSON: { index: number, reason: string }",
+        },
+        { role: "user", content: candidates },
+      ],
+      response_format: { type: "json_object" },
+    });
+
+    const election = JSON.parse(electionRes.choices[0].message.content ?? "{}");
+    if (typeof election.index === "number" && election.index >= 0 && election.index < pending.length) {
+      bigStoryIdx = election.index;
+      console.log(`Big story elected: "${pending[bigStoryIdx].article.plain_title}" — ${election.reason}`);
+    } else {
+      throw new Error("Invalid election index");
+    }
+  } catch (err) {
+    // Fall back to most-sourced story if LLM election fails
+    console.warn("Big story election failed, falling back to source count:", err);
+    bigStoryIdx = pending.reduce(
+      (best, p, i) => p.sourceCount > pending[best].sourceCount ? i : best,
+      0
+    );
+    console.log(`Big story elected (fallback): "${pending[bigStoryIdx].article.plain_title}" (${pending[bigStoryIdx].sourceCount} sources)`);
+  }
 
   // Stage 3: insert all with correct categories
   let published = 0;

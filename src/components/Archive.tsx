@@ -100,7 +100,7 @@ function MobileCard({ e }: { e: CardArticle }) {
 }
 
 export function Archive({ articles }: { articles: Article[] }) {
-  const editions: CardArticle[] = articles.length >= 3 ? articles.slice(0, 6) : FALLBACK;
+  const editions: CardArticle[] = articles.length > 0 ? articles.slice(0, 6) : FALLBACK;
   const n = editions.length;
 
   const [hover, setHover] = useState<number | null>(null);
@@ -148,7 +148,7 @@ export function Archive({ articles }: { articles: Article[] }) {
           </h2>
         </div>
         <Button variant="primary" size="sm" href="/vault">
-          Browse all {articles.length} →
+          Browse all →
         </Button>
       </div>
 

@@ -19,7 +19,7 @@ export default async function Home() {
       <Navbar />
       <Ticker articles={articles} />
       <Hero article={latest} />
-      <Archive articles={bigStories.length >= 3 ? bigStories : articles} />
+      <Archive articles={articles} />
       <WhatIsAI />
       <EmailSignup />
       <Footer />
