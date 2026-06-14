@@ -5,6 +5,8 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { PageLoader } from "@/components/PageLoader";
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://article.news";
+
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-display",
@@ -24,13 +26,64 @@ const splineMono = Spline_Sans_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Article — AI, in plain English",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Article — AI News, Explained Simply",
+    template: "%s | Article",
+  },
   description:
-    "Every morning we read the entire AI world so you don't have to — then explain what actually matters, like a smart friend who happens to know this stuff.",
+    "Daily AI news explained in plain English. Every morning we cover the stories that actually matter — no jargon, no hype, no homework.",
+  keywords: [
+    "AI news",
+    "artificial intelligence news",
+    "AI newsletter",
+    "AI news daily",
+    "AI explained",
+    "AI updates today",
+    "machine learning news",
+    "ChatGPT news",
+    "OpenAI news",
+    "AI articles",
+  ],
+  authors: [{ name: "Article" }],
+  creator: "Article",
+  publisher: "Article",
   openGraph: {
-    title: "Article — AI, in plain English",
-    description: "The daily AI edition. No jargon. No hype. No homework.",
+    title: "Article — AI News, Explained Simply",
+    description:
+      "Daily AI news explained in plain English. No jargon, no hype — just what actually matters.",
+    url: SITE_URL,
+    siteName: "Article",
     type: "website",
+    locale: "en_US",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Article — AI News, Explained Simply",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Article — AI News, Explained Simply",
+    description: "Daily AI news explained in plain English. No jargon, no hype.",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: SITE_URL,
   },
 };
 

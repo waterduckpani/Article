@@ -77,11 +77,28 @@ function ArchiveCard({ article, matchType, compact = false }: { article: Article
         fontSize: compact ? 15 : 24,
         lineHeight: compact ? 1.2 : 1.08,
         letterSpacing: "-.02em",
-        margin: compact ? "0 0 10px" : "0 0 12px",
-        flex: 1,
+        margin: compact ? "0 0 10px" : "0 0 8px",
+        flex: compact ? 1 : undefined,
       }}>
         {article.plain_title}
       </h3>
+
+      {!compact && article.plain_summary && (
+        <p style={{
+          fontFamily: "var(--font-body)",
+          fontSize: 13,
+          lineHeight: 1.5,
+          color: "#4a6872",
+          margin: "0 0 12px",
+          flex: 1,
+          display: "-webkit-box",
+          WebkitLineClamp: 3,
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden",
+        }}>
+          {article.plain_summary}
+        </p>
+      )}
 
       <div style={{
         display: "flex",

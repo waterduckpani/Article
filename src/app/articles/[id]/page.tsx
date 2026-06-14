@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getArticleById, getAdjacentArticles } from "@/lib/supabase";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -7,6 +8,50 @@ import { Button } from "@/components/ui/Button";
 import type { ArticleSource, AdjacentArticle } from "@/lib/supabase";
 
 export const revalidate = 3600;
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://article.news";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const article = await getArticleById(id);
+  if (!article) return {};
+
+  const description = article.plain_summary.slice(0, 160);
+  const url = `${SITE_URL}/articles/${id}`;
+
+  return {
+    title: article.plain_title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title: article.plain_title,
+      description,
+      url,
+      siteName: "Article",
+      type: "article",
+      publishedTime: article.published_at,
+      authors: ["Article"],
+      images: [
+        {
+          url: "/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: article.plain_title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.plain_title,
+      description,
+      images: ["/og-image.png"],
+    },
+  };
+}
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", {
@@ -32,8 +77,29 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
   const sources: ArticleSource[] = article.sources ?? (article.source_url && !article.source_url.startsWith("article:") ? [{ url: article.source_url, name: article.source_name }] : []);
   const mins = readingTime(content);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: article.plain_title,
+    description: article.plain_summary.slice(0, 160),
+    datePublished: article.published_at,
+    dateModified: article.published_at,
+    author: [{ "@type": "Organization", name: "Article", url: SITE_URL }],
+    publisher: {
+      "@type": "Organization",
+      name: "Article",
+      url: SITE_URL,
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/og-image.png` },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_URL}/articles/${id}` },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
       <main style={{ background: "#F4E9CD", minHeight: "100vh" }}>
 
