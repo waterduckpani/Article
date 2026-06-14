@@ -2,7 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { WhatIsAIPage } from "@/components/WhatIsAIPage";
 import { Footer } from "@/components/Footer";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://article.news";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://articlenews.co";
 
 export const metadata = {
   title: "What is AI? A Plain-English Guide",

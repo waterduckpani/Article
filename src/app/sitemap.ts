@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getAllArticles } from "@/lib/supabase";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://article.news";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://articlenews.co";
 
 export const revalidate = 3600;
 

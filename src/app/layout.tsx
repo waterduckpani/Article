@@ -5,7 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { PageLoader } from "@/components/PageLoader";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://article.news";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://articlenews.co";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],

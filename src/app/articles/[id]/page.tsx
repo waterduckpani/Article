@@ -9,7 +9,7 @@ import type { ArticleSource, AdjacentArticle } from "@/lib/supabase";
 
 export const revalidate = 3600;
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://article.news";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://articlenews.co";
 
 export async function generateMetadata({
   params,
