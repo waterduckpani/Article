@@ -4,13 +4,6 @@ import { Resend } from "resend";
 import { render } from "@react-email/render";
 import NewsletterEmail, { type NewsletterArticle } from "../../../../emails/newsletter";
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!
-);
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const BATCH_SIZE = 100;
 
 function todayLabel(): string {
@@ -27,6 +20,12 @@ export async function POST(req: NextRequest) {
   if (!secret || secret !== process.env.CRON_SECRET) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
+
+  const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_KEY!
+  );
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   try {
     const { data: articlesData, error: articlesError } = await supabaseAdmin
