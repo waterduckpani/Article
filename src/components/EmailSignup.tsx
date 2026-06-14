@@ -3,16 +3,39 @@ import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 
+type Status = "loading" | "ok" | "err" | "duplicate" | "no-consent" | null;
+
 export function EmailSignup() {
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
-  const [status, setStatus] = useState<"ok" | "err" | "no-consent" | null>(null);
+  const [status, setStatus] = useState<Status>(null);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!consent) { setStatus("no-consent"); return; }
-    const ok = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim());
-    setStatus(ok ? "ok" : "err");
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())) {
+      setStatus("err");
+      return;
+    }
+
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+
+      if (res.ok) {
+        setStatus("ok");
+      } else if (res.status === 409) {
+        setStatus("duplicate");
+      } else {
+        setStatus("err");
+      }
+    } catch {
+      setStatus("err");
+    }
   }
 
   return (
@@ -81,8 +104,8 @@ export function EmailSignup() {
               transition: "border-color 0.2s ease",
             }}
           />
-          <Button variant="secondary" type="submit">
-            Join free
+          <Button variant="secondary" type="submit" style={{ opacity: status === "loading" ? 0.7 : 1 }}>
+            {status === "loading" ? "Joining…" : "Join free"}
           </Button>
         </form>
 
@@ -126,12 +149,17 @@ export function EmailSignup() {
         >
           {status === "ok" && (
             <span style={{ color: "#9DBEBB" }}>
-              You&#39;re in. Check your inbox to confirm. ✦
+              You&#39;re in. Check your inbox for a welcome note. ✦
+            </span>
+          )}
+          {status === "duplicate" && (
+            <span style={{ color: "#9DBEBB" }}>
+              You&#39;re already subscribed — see you tomorrow morning.
             </span>
           )}
           {status === "err" && (
             <span style={{ color: "#E0A53F" }}>
-              Hmm — that doesn&#39;t look like an email address yet.
+              Hmm — something went wrong. Try again in a moment.
             </span>
           )}
           {status === "no-consent" && (
