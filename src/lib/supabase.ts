@@ -8,6 +8,7 @@ export type ArticleSource = {
 
 export type Article = {
   id: string;
+  slug: string | null;
   source_url: string;
   source_name: string;
   plain_title: string;
@@ -28,7 +29,7 @@ export const supabase = createClient(
 export async function getPublishedArticles(limit = 20): Promise<Article[]> {
   const { data, error } = await supabase
     .from("articles")
-    .select("id, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, published_at, created_at")
+    .select("id, slug, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, published_at, created_at")
     .eq("status", "published")
     .order("published_at", { ascending: false })
     .limit(limit);
@@ -44,7 +45,7 @@ export async function getPublishedArticles(limit = 20): Promise<Article[]> {
 export async function getAllArticles(limit = 500): Promise<Article[]> {
   const { data, error } = await supabase
     .from("articles")
-    .select("id, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, published_at, created_at")
+    .select("id, slug, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, published_at, created_at")
     .eq("status", "published")
     .order("published_at", { ascending: false })
     .limit(limit);
@@ -57,7 +58,7 @@ export async function getAllArticles(limit = 500): Promise<Article[]> {
   return data ?? [];
 }
 
-export type AdjacentArticle = Pick<Article, "id" | "plain_title" | "published_at">;
+export type AdjacentArticle = Pick<Article, "id" | "slug" | "plain_title" | "published_at">;
 
 export async function getAdjacentArticles(
   id: string,
@@ -66,7 +67,7 @@ export async function getAdjacentArticles(
   const [prevRes, nextRes] = await Promise.all([
     supabase
       .from("articles")
-      .select("id, plain_title, published_at")
+      .select("id, slug, plain_title, published_at")
       .eq("status", "published")
       .neq("id", id)
       .lt("published_at", publishedAt)
@@ -75,7 +76,7 @@ export async function getAdjacentArticles(
       .maybeSingle(),
     supabase
       .from("articles")
-      .select("id, plain_title, published_at")
+      .select("id, slug, plain_title, published_at")
       .eq("status", "published")
       .neq("id", id)
       .gt("published_at", publishedAt)
@@ -90,10 +91,41 @@ export async function getAdjacentArticles(
   };
 }
 
+export async function getArticleBySlug(slug: string): Promise<Article | null> {
+  const { data, error } = await supabase
+    .from("articles")
+    .select("id, slug, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, published_at, created_at")
+    .eq("slug", slug)
+    .eq("status", "published")
+    .maybeSingle();
+
+  if (error) {
+    console.error("Failed to fetch article by slug:", error.message);
+    return null;
+  }
+  return data;
+}
+
+export async function getArticlesByCategory(category: string, limit = 50): Promise<Article[]> {
+  const { data, error } = await supabase
+    .from("articles")
+    .select("id, slug, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, published_at, created_at")
+    .eq("status", "published")
+    .eq("category", category)
+    .order("published_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Failed to fetch articles by category:", error.message);
+    return [];
+  }
+  return data ?? [];
+}
+
 export async function getArticleById(id: string): Promise<Article | null> {
   const { data, error } = await supabase
     .from("articles")
-    .select("id, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, published_at, created_at")
+    .select("id, slug, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, published_at, created_at")
     .eq("id", id)
     .eq("status", "published")
     .maybeSingle();

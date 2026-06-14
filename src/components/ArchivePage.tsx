@@ -15,7 +15,7 @@ function ArchiveCard({ article, matchType, compact = false }: { article: Article
 
   return (
     <a
-      href={`/articles/${article.id}`}
+      href={`/articles/${article.slug ?? article.id}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className="archive-grid-card"

@@ -342,7 +342,7 @@ export function ArticleBody({
             }}>
               {prev ? (
                 <a
-                  href={`/articles/${prev.id}`}
+                  href={`/articles/${prev.slug ?? prev.id}`}
                   className="nav-link"
                   style={{ display: "flex", flexDirection: "column", gap: 5, maxWidth: "44%", textDecoration: "none" }}
                 >
@@ -356,7 +356,7 @@ export function ArticleBody({
               ) : <div />}
               {next ? (
                 <a
-                  href={`/articles/${next.id}`}
+                  href={`/articles/${next.slug ?? next.id}`}
                   className="nav-link"
                   style={{ display: "flex", flexDirection: "column", gap: 5, maxWidth: "44%", textDecoration: "none", alignItems: "flex-end", textAlign: "right" }}
                 >

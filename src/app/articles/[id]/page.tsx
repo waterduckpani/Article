@@ -1,6 +1,9 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { RedirectType } from "next/navigation";
 import type { Metadata } from "next";
-import { getArticleById, getAdjacentArticles } from "@/lib/supabase";
+import { getArticleById, getArticleBySlug, getAdjacentArticles } from "@/lib/supabase";
+
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ArticleBody } from "@/components/ArticleBody";
@@ -17,11 +20,13 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const article = await getArticleById(id);
+  const article = UUID_REGEX.test(id)
+    ? await getArticleById(id)
+    : await getArticleBySlug(id);
   if (!article) return {};
 
   const description = article.plain_summary.slice(0, 160);
-  const url = `${SITE_URL}/articles/${id}`;
+  const url = `${SITE_URL}/articles/${article.slug ?? article.id}`;
 
   return {
     title: article.plain_title,
@@ -68,8 +73,16 @@ function readingTime(text: string) {
 
 export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const article = await getArticleById(id);
-  if (!article) notFound();
+
+  let article;
+  if (UUID_REGEX.test(id)) {
+    article = await getArticleById(id);
+    if (!article) notFound();
+    if (article.slug) redirect(`/articles/${article.slug}`, RedirectType.replace);
+  } else {
+    article = await getArticleBySlug(id);
+    if (!article) notFound();
+  }
 
   const { prev, next } = await getAdjacentArticles(id, article.published_at);
 
@@ -91,7 +104,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
       url: SITE_URL,
       logo: { "@type": "ImageObject", url: `${SITE_URL}/og-image.png` },
     },
-    mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_URL}/articles/${id}` },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_URL}/articles/${article.slug ?? article.id}` },
   };
 
   return (
@@ -152,7 +165,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
               <div style={{ display: "flex", gap: 12 }}>
                 {prev && (
                   <a
-                    href={`/articles/${prev.id}`}
+                    href={`/articles/${prev.slug ?? prev.id}`}
                     className="nav-link"
                     style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 600, letterSpacing: ".1em", color: "#468189" }}
                     title={prev.plain_title}
@@ -163,7 +176,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                 {prev && next && <span style={{ color: "#2a4348", opacity: 0.4 }}>·</span>}
                 {next && (
                   <a
-                    href={`/articles/${next.id}`}
+                    href={`/articles/${next.slug ?? next.id}`}
                     className="nav-link"
                     style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 600, letterSpacing: ".1em", color: "#468189" }}
                     title={next.plain_title}

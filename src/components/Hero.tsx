@@ -15,7 +15,7 @@ export function Hero({ article }: { article: Article | null }) {
   const summary = article?.plain_summary ?? "Apple and Google quietly switched on assistants that book appointments and draft replies. We lived with both for a week.";
   const category = article?.category ?? "The Big Story";
   const date = article ? formatDate(article.published_at) : "12 JUN 2026";
-  const href = article ? `/articles/${article.id}` : "/vault";
+  const href = article ? `/articles/${article.slug ?? article.id}` : "/vault";
 
   return (
     <section className="hero-section">

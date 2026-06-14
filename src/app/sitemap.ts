@@ -9,10 +9,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const articles = await getAllArticles(500);
 
   const articleUrls: MetadataRoute.Sitemap = articles.map((a) => ({
-    url: `${SITE_URL}/articles/${a.id}`,
+    url: `${SITE_URL}/articles/${a.slug ?? a.id}`,
     lastModified: new Date(a.published_at),
     changeFrequency: "weekly",
     priority: 0.8,
+  }));
+
+  const categoryUrls: MetadataRoute.Sitemap = [
+    "the-big-story", "everyday-ai", "explainer", "at-work", "we-tried-it", "big-question", "just-in",
+  ].map((slug) => ({
+    url: `${SITE_URL}/category/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "daily" as const,
+    priority: 0.6,
   }));
 
   return [
@@ -28,6 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    ...categoryUrls,
     ...articleUrls,
   ];
 }

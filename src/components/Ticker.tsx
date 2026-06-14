@@ -2,18 +2,19 @@
 import { useState, useEffect } from "react";
 import type { Article } from "@/lib/supabase";
 
-const FALLBACK: Pick<Article, "id" | "plain_title">[] = [
-  { id: "", plain_title: "A new tool turns your doodles into finished art" },
-  { id: "", plain_title: "Doctors use AI to read scans faster — they still have the final say" },
-  { id: "", plain_title: "Why your inbox suddenly writes better than you do" },
-  { id: "", plain_title: "Schools are rewriting homework for the chatbot age" },
-  { id: "", plain_title: "The four AI words everyone used this week, explained" },
-  { id: "", plain_title: "Grandma's recipes, now read aloud in her own voice" },
+const FALLBACK: Pick<Article, "id" | "slug" | "plain_title">[] = [
+  { id: "", slug: null, plain_title: "A new tool turns your doodles into finished art" },
+  { id: "", slug: null, plain_title: "Doctors use AI to read scans faster — they still have the final say" },
+  { id: "", slug: null, plain_title: "Why your inbox suddenly writes better than you do" },
+  { id: "", slug: null, plain_title: "Schools are rewriting homework for the chatbot age" },
+  { id: "", slug: null, plain_title: "The four AI words everyone used this week, explained" },
+  { id: "", slug: null, plain_title: "Grandma's recipes, now read aloud in her own voice" },
 ];
 
 export function Ticker({ articles }: { articles: Article[] }) {
   const items = (articles.length > 0 ? articles.slice(0, 8) : FALLBACK).map((a) => ({
     id: a.id,
+    slug: a.slug,
     title: a.plain_title,
   }));
 
@@ -29,7 +30,7 @@ export function Ticker({ articles }: { articles: Article[] }) {
   }, [items.length]);
 
   const current = items[tick];
-  const href = current.id ? `/articles/${current.id}` : null;
+  const href = current.id ? `/articles/${current.slug ?? current.id}` : null;
 
   return (
     <div className="ticker-inner">

@@ -1,8 +1,20 @@
 import ws from "ws";
 import { createClient } from "@supabase/supabase-js";
 import Parser from "rss-parser";
-import { createHash } from "crypto";
+import { createHash, randomUUID } from "crypto";
 import OpenAI from "openai";
+
+function generateSlug(title: string, id: string): string {
+  const base = title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .slice(0, 60)
+    .replace(/-$/, "");
+  return `${base}-${id.slice(0, 6)}`;
+}
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -410,7 +422,12 @@ async function run() {
     const { article, hash, sourcesJson, publishedAt, sourceName, originalTitle } = pending[i];
     const category = i === bigStoryIdx ? "The Big Story" : article.category;
 
+    const newId = randomUUID();
+    const slug = generateSlug(article.plain_title, newId);
+
     const { error } = await supabase.from("articles").insert({
+      id: newId,
+      slug,
       source_url: `article:${hash}`,
       source_name: sourceName,
       original_title: originalTitle,

@@ -3,25 +3,25 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import type { Article } from "@/lib/supabase";
 
-const FALLBACK = [
-  { id: "1", source_url: "#", plain_title: "The week AI learned to say it doesn't know", category: "The Big Story", published_at: "2026-06-11T00:00:00Z", source_name: "Article" },
-  { id: "2", source_url: "#", plain_title: "Your group chat has a new member", category: "Everyday", published_at: "2026-06-10T00:00:00Z", source_name: "Article" },
-  { id: "3", source_url: "#", plain_title: "We asked five AIs to plan a birthday party", category: "We Tried It", published_at: "2026-06-09T00:00:00Z", source_name: "Article" },
-  { id: "4", source_url: "#", plain_title: "The quiet rise of the AI co-pilot", category: "At Work", published_at: "2026-06-08T00:00:00Z", source_name: "Article" },
-  { id: "5", source_url: "#", plain_title: "What a trillion-word library taught a machine", category: "Explainer", published_at: "2026-06-07T00:00:00Z", source_name: "Article" },
-  { id: "6", source_url: "#", plain_title: "Can a computer actually be creative?", category: "Big Question", published_at: "2026-06-06T00:00:00Z", source_name: "Article" },
+const FALLBACK: CardArticle[] = [
+  { id: "1", slug: null, source_url: "#", plain_title: "The week AI learned to say it doesn't know", category: "The Big Story", published_at: "2026-06-11T00:00:00Z", source_name: "Article" },
+  { id: "2", slug: null, source_url: "#", plain_title: "Your group chat has a new member", category: "Everyday", published_at: "2026-06-10T00:00:00Z", source_name: "Article" },
+  { id: "3", slug: null, source_url: "#", plain_title: "We asked five AIs to plan a birthday party", category: "We Tried It", published_at: "2026-06-09T00:00:00Z", source_name: "Article" },
+  { id: "4", slug: null, source_url: "#", plain_title: "The quiet rise of the AI co-pilot", category: "At Work", published_at: "2026-06-08T00:00:00Z", source_name: "Article" },
+  { id: "5", slug: null, source_url: "#", plain_title: "What a trillion-word library taught a machine", category: "Explainer", published_at: "2026-06-07T00:00:00Z", source_name: "Article" },
+  { id: "6", slug: null, source_url: "#", plain_title: "Can a computer actually be creative?", category: "Big Question", published_at: "2026-06-06T00:00:00Z", source_name: "Article" },
 ];
 
 function formatShortDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short" }).toUpperCase();
 }
 
-type CardArticle = Pick<Article, "id" | "source_url" | "plain_title" | "category" | "published_at" | "source_name">;
+type CardArticle = Pick<Article, "id" | "slug" | "source_url" | "plain_title" | "category" | "published_at" | "source_name">;
 
 function MobileCard({ e }: { e: CardArticle }) {
   const ref = useRef<HTMLAnchorElement>(null);
   const [visible, setVisible] = useState(false);
-  const href = e.source_url === "#" ? "#" : `/articles/${e.id}`;
+  const href = e.source_url === "#" ? "#" : `/articles/${e.slug ?? e.id}`;
 
   useEffect(() => {
     const el = ref.current;
@@ -198,7 +198,7 @@ export function Archive({ articles }: { articles: Article[] }) {
               }}
             >
               <a
-                href={e.source_url === "#" ? "#" : `/articles/${e.id}`}
+                href={e.source_url === "#" ? "#" : `/articles/${e.slug ?? e.id}`}
                 onMouseEnter={() => setHover(i)}
                 onMouseLeave={() => setHover(null)}
                 style={{
