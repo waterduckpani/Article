@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
-import { render } from "@react-email/components";
+import { render } from "@react-email/render";
 import NewsletterEmail, { type NewsletterArticle } from "../../../../emails/newsletter";
 
 const supabaseAdmin = createClient(
