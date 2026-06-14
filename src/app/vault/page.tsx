@@ -6,9 +6,26 @@ import { getAllArticles } from "@/lib/supabase";
 
 export const revalidate = 3600;
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://articlenews.co";
+
 export const metadata = {
-  title: "The Vault — Article",
-  description: "Every AI story we've ever published.",
+  title: "The Vault — Every AI Story We've Published",
+  description: "Browse the full archive of Article: every AI story, explained in plain English. Search, filter by topic, and catch up on anything you missed.",
+  alternates: { canonical: `${SITE_URL}/vault` },
+  openGraph: {
+    title: "The Vault — Article",
+    description: "Every AI story we've published, all in one place. Browse and search the full Article archive.",
+    url: `${SITE_URL}/vault`,
+    siteName: "Article",
+    type: "website",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "The Vault — Article" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "The Vault — Article",
+    description: "Every AI story we've published, all in one place.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default async function Vault() {

@@ -16,6 +16,16 @@ const CATEGORIES: Record<string, string> = {
   "just-in": "Just In",
 };
 
+const CATEGORY_DESCRIPTIONS: Record<string, string> = {
+  "the-big-story": "The day's most important AI development, explained in full. No noise — just the story that actually matters, and why it does.",
+  "everyday-ai": "How AI is changing ordinary life — apps, tools, habits, and the small decisions that add up. Practical and jargon-free.",
+  "explainer": "New to AI? Our Explainers break down complex ideas from scratch — no math, no prior knowledge needed. Plain English only.",
+  "at-work": "AI in the workplace: how it's changing jobs, workflows, and what it means for your career. Real talk, no hype.",
+  "we-tried-it": "We test AI tools so you don't have to. Hands-on reviews, honest takes, and no sponsored fluff.",
+  "big-question": "The harder questions about AI — ethics, power, what it all means for society. Thoughtful, not alarmist.",
+  "just-in": "Breaking AI news, explained fast. The latest developments before anyone else has had time to make sense of them.",
+};
+
 export async function generateStaticParams() {
   return Object.keys(CATEGORIES).map((slug) => ({ slug }));
 }
@@ -28,16 +38,24 @@ export async function generateMetadata({
   const { slug } = await params;
   const name = CATEGORIES[slug];
   if (!name) return {};
+  const description = CATEGORY_DESCRIPTIONS[slug] ?? `Browse all Article stories filed under ${name}. Daily AI news explained in plain English.`;
   return {
-    title: `${name} — AI News`,
-    description: `Browse all Article stories filed under ${name}. Daily AI news explained in plain English.`,
+    title: `${name} — Article`,
+    description,
     alternates: { canonical: `${SITE_URL}/category/${slug}` },
     openGraph: {
       title: `${name} — Article`,
-      description: `AI news under ${name}, explained simply.`,
+      description,
       url: `${SITE_URL}/category/${slug}`,
       siteName: "Article",
       type: "website",
+      images: [{ url: "/og-image.png", width: 1200, height: 630, alt: `${name} — Article` }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${name} — Article`,
+      description,
+      images: ["/og-image.png"],
     },
   };
 }

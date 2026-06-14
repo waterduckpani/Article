@@ -1,11 +1,21 @@
 import { ImageResponse } from "next/og";
+import { getArticleBySlug, getArticleById } from "@/lib/supabase";
 
 export const runtime = "edge";
-export const alt = "Article — The Free Daily AI Newsletter, In Plain English";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function OGImage() {
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export default async function OGImage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const article = UUID_REGEX.test(id)
+    ? await getArticleById(id)
+    : await getArticleBySlug(id);
+
+  const title = article?.plain_title ?? "Article — AI News, Explained Simply";
+  const category = article?.category ?? "AI News";
+
   return new ImageResponse(
     (
       <div
@@ -35,13 +45,11 @@ export default function OGImage() {
           A
         </div>
 
-        {/* Eyebrow */}
+        {/* Category pill */}
         <div
           style={{
             display: "flex",
-            alignItems: "center",
-            gap: 12,
-            marginBottom: 40,
+            marginBottom: 36,
           }}
         >
           <div
@@ -56,50 +64,62 @@ export default function OGImage() {
               textTransform: "uppercase",
             }}
           >
-            AI Newsletter
+            {category}
           </div>
         </div>
 
-        {/* Title */}
+        {/* Article title */}
         <div
           style={{
-            fontSize: 72,
+            fontSize: title.length > 60 ? 52 : 64,
             fontWeight: 900,
             color: "#F4E9CD",
-            lineHeight: 1.05,
+            lineHeight: 1.08,
             letterSpacing: "-0.03em",
-            maxWidth: 800,
+            maxWidth: 900,
           }}
         >
-          Article
+          {title}
         </div>
 
-        {/* Tagline */}
-        <div
-          style={{
-            fontSize: 28,
-            color: "#77ACA2",
-            marginTop: 24,
-            lineHeight: 1.5,
-            maxWidth: 700,
-          }}
-        >
-          The free daily AI newsletter. Plain English. 5 minutes. No jargon, no hype.
-        </div>
-
-        {/* Domain */}
+        {/* Brand */}
         <div
           style={{
             position: "absolute",
             bottom: 60,
             left: 100,
-            fontSize: 18,
-            color: "#468189",
-            letterSpacing: "0.1em",
-            fontFamily: "monospace",
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
           }}
         >
-          articlenews.co
+          <div
+            style={{
+              fontSize: 22,
+              fontWeight: 900,
+              color: "#F4E9CD",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            Article
+          </div>
+          <div
+            style={{
+              width: 1,
+              height: 20,
+              background: "rgba(157,190,187,0.3)",
+            }}
+          />
+          <div
+            style={{
+              fontSize: 14,
+              color: "#468189",
+              letterSpacing: "0.1em",
+              fontFamily: "monospace",
+            }}
+          >
+            articlenews.co
+          </div>
         </div>
       </div>
     ),

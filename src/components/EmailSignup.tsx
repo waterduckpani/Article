@@ -5,10 +5,12 @@ import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 
 export function EmailSignup() {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"ok" | "err" | null>(null);
+  const [consent, setConsent] = useState(false);
+  const [status, setStatus] = useState<"ok" | "err" | "no-consent" | null>(null);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!consent) { setStatus("no-consent"); return; }
     const ok = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim());
     setStatus(ok ? "ok" : "err");
   }
@@ -62,9 +64,10 @@ export function EmailSignup() {
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
-              setStatus(null);
+              if (status === "err") setStatus(null);
             }}
             placeholder="you@example.com"
+            aria-label="Email address"
             style={{
               flex: 1,
               background: "#0d2935",
@@ -83,10 +86,40 @@ export function EmailSignup() {
           </Button>
         </form>
 
+        {/* GDPR consent */}
+        <label
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            gap: 10,
+            marginTop: 18,
+            cursor: "pointer",
+            maxWidth: 520,
+            margin: "18px auto 0",
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={consent}
+            onChange={(e) => {
+              setConsent(e.target.checked);
+              if (status === "no-consent") setStatus(null);
+            }}
+            style={{ marginTop: 3, accentColor: "#E0A53F", flexShrink: 0, width: 16, height: 16 }}
+          />
+          <span style={{ fontSize: 13, lineHeight: 1.55, color: "rgba(244,233,205,.6)" }}>
+            I agree to receive Article's daily newsletter. You can unsubscribe at any time. We handle your data in accordance with our{" "}
+            <a href="/privacy" style={{ color: "#9DBEBB", textDecoration: "underline" }}>
+              Privacy Policy
+            </a>
+            .
+          </span>
+        </label>
+
         <div
           style={{
             minHeight: 28,
-            marginTop: 20,
+            marginTop: 16,
             fontSize: 14.5,
             fontWeight: 700,
           }}
@@ -99,6 +132,11 @@ export function EmailSignup() {
           {status === "err" && (
             <span style={{ color: "#E0A53F" }}>
               Hmm — that doesn&#39;t look like an email address yet.
+            </span>
+          )}
+          {status === "no-consent" && (
+            <span style={{ color: "#E0A53F" }}>
+              Please tick the box above to continue.
             </span>
           )}
         </div>

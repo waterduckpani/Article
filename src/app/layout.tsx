@@ -25,33 +25,55 @@ const splineMono = Spline_Sans_Mono({
   weight: ["400", "500", "600"],
 });
 
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Article",
+  url: SITE_URL,
+  description: "The free daily AI newsletter that explains what's actually happening — in plain English, in 5 minutes.",
+  publisher: {
+    "@type": "Organization",
+    name: "Article",
+    url: SITE_URL,
+  },
+  potentialAction: {
+    "@type": "SearchAction",
+    target: { "@type": "EntryPoint", urlTemplate: `${SITE_URL}/vault?q={search_term_string}` },
+    "query-input": "required name=search_term_string",
+  },
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Article — AI News, Explained Simply",
+    default: "Article — The Free Daily AI Newsletter, In Plain English",
     template: "%s | Article",
   },
   description:
-    "Daily AI news explained in plain English. Every morning we cover the stories that actually matter — no jargon, no hype, no homework.",
+    "The free daily AI newsletter that explains what's actually happening — in plain English, in 5 minutes. No jargon, no hype. Join thousands of readers.",
   keywords: [
+    "AI newsletter",
+    "AI newsletter free",
     "AI news",
     "artificial intelligence news",
-    "AI newsletter",
-    "AI news daily",
     "AI explained",
+    "AI news daily",
+    "AI for beginners",
+    "AI explained for non-techies",
+    "AI news plain English",
+    "what is AI",
     "AI updates today",
     "machine learning news",
     "ChatGPT news",
     "OpenAI news",
-    "AI articles",
   ],
   authors: [{ name: "Article" }],
   creator: "Article",
   publisher: "Article",
   openGraph: {
-    title: "Article — AI News, Explained Simply",
+    title: "Article — The Free Daily AI Newsletter, In Plain English",
     description:
-      "Daily AI news explained in plain English. No jargon, no hype — just what actually matters.",
+      "The free daily AI newsletter that explains what's actually happening — in plain English, in 5 minutes. No jargon, no hype.",
     url: SITE_URL,
     siteName: "Article",
     type: "website",
@@ -61,14 +83,14 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Article — AI News, Explained Simply",
+        alt: "Article — The Free Daily AI Newsletter, In Plain English",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Article — AI News, Explained Simply",
-    description: "Daily AI news explained in plain English. No jargon, no hype.",
+    title: "Article — The Free Daily AI Newsletter, In Plain English",
+    description: "The free daily AI newsletter. AI news in plain English, in 5 minutes. No jargon, no hype.",
     images: ["/og-image.png"],
   },
   robots: {
@@ -98,6 +120,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${bricolage.variable} ${hanken.variable} ${splineMono.variable}`}>
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
         <PageLoader />
         <div className="page-reveal">{children}</div>
         <SpeedInsights />

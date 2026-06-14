@@ -45,7 +45,7 @@ export function Hero({ article }: { article: Article | null }) {
               margin: "0 0 36px",
             }}
           >
-            AI news that talks like a person.
+            The AI newsletter that actually makes sense.
           </h1>
           <p
             style={{

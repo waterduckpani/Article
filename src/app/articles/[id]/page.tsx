@@ -25,7 +25,8 @@ export async function generateMetadata({
     : await getArticleBySlug(id);
   if (!article) return {};
 
-  const description = article.plain_summary.slice(0, 160);
+  const raw = article.plain_summary;
+  const description = raw.length > 157 ? raw.slice(0, 157) + "..." : raw;
   const url = `${SITE_URL}/articles/${article.slug ?? article.id}`;
 
   return {
@@ -40,20 +41,11 @@ export async function generateMetadata({
       type: "article",
       publishedTime: article.published_at,
       authors: ["Article"],
-      images: [
-        {
-          url: "/og-image.png",
-          width: 1200,
-          height: 630,
-          alt: article.plain_title,
-        },
-      ],
     },
     twitter: {
       card: "summary_large_image",
       title: article.plain_title,
       description,
-      images: ["/og-image.png"],
     },
   };
 }
