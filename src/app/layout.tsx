@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { PageLoader } from "@/components/PageLoader";
+import { NewsletterPopup } from "@/components/NewsletterPopup";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://articlenews.co";
 
@@ -126,6 +127,7 @@ export default function RootLayout({
         />
         <PageLoader />
         <div className="page-reveal">{children}</div>
+        <NewsletterPopup />
         <SpeedInsights />
         <Analytics />
       </body>
