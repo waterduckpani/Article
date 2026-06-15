@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import { render } from "@react-email/render";
 import WelcomeEmail from "../../../../emails/welcome";
+import { cleanFirstName } from "@/lib/personalize";
 
 export async function POST(req: NextRequest) {
   const supabaseAdmin = createClient(
@@ -14,6 +15,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const email = (body?.email ?? "").trim().toLowerCase();
+    const firstName = cleanFirstName(body?.name);
 
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
       return NextResponse.json({ error: "Invalid email address." }, { status: 400 });
@@ -21,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     const { error: dbError } = await supabaseAdmin
       .from("subscribers")
-      .insert({ email });
+      .insert({ email, first_name: firstName });
 
     if (dbError) {
       if (dbError.code === "23505") {
@@ -34,7 +36,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Could not save your email." }, { status: 500 });
     }
 
-    const html = await render(WelcomeEmail());
+    const html = await render(WelcomeEmail({ firstName }));
 
     const { error: emailError } = await resend.emails.send({
       from: "Article <hello@articlenews.co>",

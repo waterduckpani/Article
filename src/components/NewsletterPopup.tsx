@@ -1,15 +1,15 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { hasSubscribed, markSubscribed } from "@/lib/subscription";
 
 type Status = "idle" | "loading" | "ok" | "err" | "duplicate";
-
-const SUBSCRIBED_KEY = "article:subscribed";
 
 export function NewsletterPopup() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false); // in DOM
   const [visible, setVisible] = useState(false); // slid in
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const enterTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -17,12 +17,11 @@ export function NewsletterPopup() {
 
   // Re-runs on first load and on every route change.
   useEffect(() => {
-    // Don't pester people who've already joined.
-    if (typeof window !== "undefined" && localStorage.getItem(SUBSCRIBED_KEY)) {
-      return;
-    }
+    // Don't pester people who've already joined (via either form).
+    if (hasSubscribed()) return;
     // Don't show it overlapping the big signup section on the homepage.
     setStatus("idle");
+    setName("");
     setEmail("");
     setMounted(true);
 
@@ -54,13 +53,11 @@ export function NewsletterPopup() {
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ email: email.trim(), name: name.trim() }),
       });
       if (res.ok || res.status === 409) {
         setStatus(res.ok ? "ok" : "duplicate");
-        try {
-          localStorage.setItem(SUBSCRIBED_KEY, "1");
-        } catch {}
+        markSubscribed();
         // Linger on the happy state, then slide away.
         exitTimer.current = setTimeout(dismiss, 2600);
       } else {
@@ -104,6 +101,14 @@ export function NewsletterPopup() {
           </p>
 
           <form onSubmit={handleSubmit} className="np-form">
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="First name (optional)"
+              aria-label="First name (optional)"
+              className="np-input"
+            />
             <input
               type="email"
               value={email}

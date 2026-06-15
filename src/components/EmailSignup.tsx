@@ -2,10 +2,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
+import { markSubscribed } from "@/lib/subscription";
 
 type Status = "loading" | "ok" | "err" | "duplicate" | "no-consent" | null;
 
 export function EmailSignup() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<Status>(null);
@@ -23,13 +25,15 @@ export function EmailSignup() {
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ email: email.trim(), name: name.trim() }),
       });
 
       if (res.ok) {
         setStatus("ok");
+        markSubscribed();
       } else if (res.status === 409) {
         setStatus("duplicate");
+        markSubscribed();
       } else {
         setStatus("err");
       }
@@ -81,7 +85,25 @@ export function EmailSignup() {
           Unsubscribe anytime — no hard feelings.
         </p>
 
-        <form onSubmit={handleSubmit} className="signup-form">
+        <form onSubmit={handleSubmit} className="signup-form" style={{ flexWrap: "wrap" }}>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="First name (optional)"
+            aria-label="First name (optional)"
+            style={{
+              flexBasis: "100%",
+              background: "#0d2935",
+              border: "1px solid rgba(157,190,187,.35)",
+              color: "#F4E9CD",
+              padding: "16px 20px",
+              borderRadius: 40,
+              fontSize: 16,
+              fontFamily: "var(--font-body)",
+              outline: "none",
+            }}
+          />
           <input
             type="email"
             value={email}

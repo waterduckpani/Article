@@ -11,13 +11,18 @@ import {
   Section,
   Text,
 } from "@react-email/components";
+import { greetingName } from "@/lib/personalize";
 
 const ink = "#031926";
 const paper = "#F4E9CD";
 const gold = "#E0A53F";
 const mist = "#9DBEBB";
 
-export default function WelcomeEmail() {
+interface WelcomeEmailProps {
+  firstName?: string | null;
+}
+
+export default function WelcomeEmail({ firstName }: WelcomeEmailProps = {}) {
   return (
     <Html lang="en">
       <Head>
@@ -56,6 +61,8 @@ export default function WelcomeEmail() {
           <Heading style={h1}>
             You&apos;re in. Your first edition lands tomorrow morning.
           </Heading>
+
+          <Text style={greeting_text}>Hi {greetingName(firstName)},</Text>
 
           <Text style={body_text}>
             Every weekday we cut through the noise and deliver the five AI
@@ -156,6 +163,15 @@ const h1: React.CSSProperties = {
   letterSpacing: "-0.025em",
   color: ink,
   margin: "0 0 24px",
+};
+
+const greeting_text: React.CSSProperties = {
+  fontFamily: "'Hanken Grotesk', Helvetica, Arial, sans-serif",
+  fontWeight: 700,
+  fontSize: 16,
+  lineHeight: 1.65,
+  color: ink,
+  margin: "0 0 16px",
 };
 
 const body_text: React.CSSProperties = {

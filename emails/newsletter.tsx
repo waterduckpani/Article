@@ -13,6 +13,7 @@ import {
   Section,
   Text,
 } from "@react-email/components";
+import { greetingName } from "@/lib/personalize";
 
 const ink = "#031926";
 const paper = "#F4E9CD";
@@ -32,6 +33,7 @@ export interface NewsletterArticle {
 interface NewsletterEmailProps {
   articles: NewsletterArticle[];
   date: string;
+  firstName?: string | null;
 }
 
 function articleUrl(article: NewsletterArticle): string {
@@ -50,7 +52,7 @@ function formatDate(iso: string): string {
   });
 }
 
-export default function NewsletterEmail({ articles, date }: NewsletterEmailProps) {
+export default function NewsletterEmail({ articles, date, firstName }: NewsletterEmailProps) {
   const top = articles[0];
   const rest = articles.slice(1, 6);
   const previewText = top
@@ -98,6 +100,10 @@ export default function NewsletterEmail({ articles, date }: NewsletterEmailProps
         </Section>
 
         <Container style={wrapper}>
+          <Text style={greeting_text}>
+            Hi {greetingName(firstName)}, here&apos;s today&apos;s edition.
+          </Text>
+
           {/* Hero story */}
           {top && (
             <Section style={hero_section}>
@@ -235,6 +241,15 @@ const wrapper: React.CSSProperties = {
   maxWidth: 600,
   margin: "0 auto",
   padding: "40px 48px",
+};
+
+const greeting_text: React.CSSProperties = {
+  fontFamily: "'Hanken Grotesk', Helvetica, Arial, sans-serif",
+  fontWeight: 700,
+  fontSize: 15,
+  lineHeight: 1.5,
+  color: teal,
+  margin: "0 0 28px",
 };
 
 const hero_section: React.CSSProperties = {
