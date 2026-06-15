@@ -12,7 +12,8 @@ jobs:
     steps:
       - name: Send newsletter
         run: |
-          curl --fail --silent --show-error \
+          curl --fail-with-body --silent --show-error \
+            --location --post308 \
             -X POST \
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             "${{ secrets.NEXT_PUBLIC_SITE_URL }}/api/send-newsletter"

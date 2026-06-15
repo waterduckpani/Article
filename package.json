@@ -1,7 +1,9 @@
 {
   "name": "article",
   "version": "1.0.0",
-  "description": "",
+  "description": "Automated AI-news publication: ingests, rewrites, publishes, and emails a daily digest.",
+  "private": true,
+  "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,7 +11,7 @@
     "lint": "next lint"
   },
   "keywords": [],
-  "author": "",
+  "author": "Bharat Khanna",
   "license": "ISC",
   "dependencies": {
     "@react-email/components": "^1.0.12",
