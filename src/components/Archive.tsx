@@ -5,8 +5,8 @@ import type { Article } from "@/lib/supabase";
 
 const FALLBACK: CardArticle[] = [
   { id: "1", slug: null, source_url: "#", plain_title: "The week AI learned to say it doesn't know", category: "The Big Story", published_at: "2026-06-11T00:00:00Z", source_name: "Article" },
-  { id: "2", slug: null, source_url: "#", plain_title: "Your group chat has a new member", category: "Everyday", published_at: "2026-06-10T00:00:00Z", source_name: "Article" },
-  { id: "3", slug: null, source_url: "#", plain_title: "We asked five AIs to plan a birthday party", category: "We Tried It", published_at: "2026-06-09T00:00:00Z", source_name: "Article" },
+  { id: "2", slug: null, source_url: "#", plain_title: "Your group chat has a new member", category: "Everyday AI", published_at: "2026-06-10T00:00:00Z", source_name: "Article" },
+  { id: "3", slug: null, source_url: "#", plain_title: "We asked five AIs to plan a birthday party", category: "Everyday AI", published_at: "2026-06-09T00:00:00Z", source_name: "Article" },
   { id: "4", slug: null, source_url: "#", plain_title: "The quiet rise of the AI co-pilot", category: "At Work", published_at: "2026-06-08T00:00:00Z", source_name: "Article" },
   { id: "5", slug: null, source_url: "#", plain_title: "What a trillion-word library taught a machine", category: "Explainer", published_at: "2026-06-07T00:00:00Z", source_name: "Article" },
   { id: "6", slug: null, source_url: "#", plain_title: "Can a computer actually be creative?", category: "Big Question", published_at: "2026-06-06T00:00:00Z", source_name: "Article" },

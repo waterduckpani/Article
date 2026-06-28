@@ -15,8 +15,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
+  // "we-tried-it" is intentionally omitted: the pipeline never generates it
+  // (no hands-on testing) and it has zero articles, so indexing it would
+  // surface an empty page. Re-add it here once there is manual content.
   const categoryUrls: MetadataRoute.Sitemap = [
-    "the-big-story", "everyday-ai", "explainer", "at-work", "we-tried-it", "big-question", "just-in",
+    "the-big-story", "everyday-ai", "explainer", "at-work", "big-question", "just-in",
   ].map((slug) => ({
     url: `${SITE_URL}/category/${slug}`,
     lastModified: new Date(),

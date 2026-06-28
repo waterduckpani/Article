@@ -178,7 +178,7 @@ function SourcesSection({ sources }: { sources: ArticleSource[] }) {
   );
 }
 
-const SECTION_LABEL_RE = /^(HOOK|WHAT'S HAPPENING|THE MECHANISM|WHY IT MATTERS|THE BOTTOM LINE)\s+/;
+const SECTION_LABEL_RE = /^(HOOK|WHAT'S HAPPENING|HOW IT WORKS|THE MECHANISM|WHY IT MATTERS|THE BOTTOM LINE):?\s+/;
 
 function renderBlocks(content: string) {
   const blocks = content.split(/\n\n+/);
