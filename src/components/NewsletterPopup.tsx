@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { hasSubscribed, markSubscribed } from "@/lib/subscription";
+import { hasSubscribed, markSubscribed, onSubscribed } from "@/lib/subscription";
 
 type Status = "idle" | "loading" | "ok" | "err" | "duplicate";
 
@@ -14,6 +14,9 @@ export function NewsletterPopup() {
   const [status, setStatus] = useState<Status>("idle");
   const enterTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const exitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // True while WE are the form that just subscribed, so we don't dismiss
+  // instantly and can linger on the "You're in" state instead.
+  const selfJoined = useRef(false);
 
   // Re-runs on first load and on every route change.
   useEffect(() => {
@@ -25,13 +28,26 @@ export function NewsletterPopup() {
     setEmail("");
     setMounted(true);
 
-    // A beat after the page settles, glide in from the right.
+    // A beat after the page settles, glide in from the right. Re-check the
+    // subscribed flag when the timer fires, not just now — the visitor may
+    // have joined via the main form during the delay.
     const delay = pathname === "/" ? 4200 : 1400;
-    enterTimer.current = setTimeout(() => setVisible(true), delay);
+    enterTimer.current = setTimeout(() => {
+      if (hasSubscribed()) return;
+      setVisible(true);
+    }, delay);
+
+    // If a subscribe happens anywhere (this or another form/tab) while we're
+    // mounted, hide for good.
+    const off = onSubscribed(() => {
+      if (selfJoined.current) return; // let our own success state linger
+      dismiss();
+    });
 
     return () => {
       if (enterTimer.current) clearTimeout(enterTimer.current);
       if (exitTimer.current) clearTimeout(exitTimer.current);
+      off();
       setVisible(false);
     };
   }, [pathname]);
@@ -57,6 +73,7 @@ export function NewsletterPopup() {
       });
       if (res.ok || res.status === 409) {
         setStatus(res.ok ? "ok" : "duplicate");
+        selfJoined.current = true;
         markSubscribed();
         // Linger on the happy state, then slide away.
         exitTimer.current = setTimeout(dismiss, 2600);
