@@ -193,7 +193,13 @@ export function ArchivePage({ articles }: { articles: Article[] }) {
     } else if (sort === "oldest") {
       result.sort((a, b) => new Date(a.published_at).getTime() - new Date(b.published_at).getTime());
     } else {
-      result.sort((a, b) => (b.quality_score ?? 0) - (a.quality_score ?? 0));
+      // Most-viewed first; fall back to recency when views are tied (e.g. two
+      // brand-new articles both at 0).
+      result.sort((a, b) => {
+        const diff = (b.view_count ?? 0) - (a.view_count ?? 0);
+        if (diff !== 0) return diff;
+        return new Date(b.published_at).getTime() - new Date(a.published_at).getTime();
+      });
     }
     return result;
   }, [articles, sort, activeCategory, query]);

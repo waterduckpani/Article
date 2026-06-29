@@ -17,6 +17,7 @@ export type Article = {
   sources: ArticleSource[] | null;
   category: string;
   quality_score: number;
+  view_count: number;
   published_at: string;
   created_at: string;
 };
@@ -29,7 +30,7 @@ export const supabase = createClient(
 export async function getPublishedArticles(limit = 20): Promise<Article[]> {
   const { data, error } = await supabase
     .from("articles")
-    .select("id, slug, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, published_at, created_at")
+    .select("id, slug, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, view_count, published_at, created_at")
     .eq("status", "published")
     .order("published_at", { ascending: false })
     .limit(limit);
@@ -45,7 +46,7 @@ export async function getPublishedArticles(limit = 20): Promise<Article[]> {
 export async function getAllArticles(limit = 500): Promise<Article[]> {
   const { data, error } = await supabase
     .from("articles")
-    .select("id, slug, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, published_at, created_at")
+    .select("id, slug, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, view_count, published_at, created_at")
     .eq("status", "published")
     .order("published_at", { ascending: false })
     .limit(limit);
@@ -94,7 +95,7 @@ export async function getAdjacentArticles(
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
   const { data, error } = await supabase
     .from("articles")
-    .select("id, slug, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, published_at, created_at")
+    .select("id, slug, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, view_count, published_at, created_at")
     .eq("slug", slug)
     .eq("status", "published")
     .maybeSingle();
@@ -109,7 +110,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
 export async function getArticlesByCategory(category: string, limit = 50): Promise<Article[]> {
   const { data, error } = await supabase
     .from("articles")
-    .select("id, slug, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, published_at, created_at")
+    .select("id, slug, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, view_count, published_at, created_at")
     .eq("status", "published")
     .eq("category", category)
     .order("published_at", { ascending: false })
@@ -125,7 +126,7 @@ export async function getArticlesByCategory(category: string, limit = 50): Promi
 export async function getArticleById(id: string): Promise<Article | null> {
   const { data, error } = await supabase
     .from("articles")
-    .select("id, slug, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, published_at, created_at")
+    .select("id, slug, source_url, source_name, plain_title, plain_summary, content, sources, category, quality_score, view_count, published_at, created_at")
     .eq("id", id)
     .eq("status", "published")
     .maybeSingle();

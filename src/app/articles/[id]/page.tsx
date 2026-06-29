@@ -7,6 +7,7 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ArticleBody } from "@/components/ArticleBody";
+import { ViewTracker } from "@/components/ViewTracker";
 import { Button } from "@/components/ui/Button";
 import type { ArticleSource, AdjacentArticle } from "@/lib/supabase";
 
@@ -105,6 +106,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <ViewTracker articleId={article.id} />
       <Navbar />
       <main style={{ background: "#F4E9CD", minHeight: "100vh" }}>
 
